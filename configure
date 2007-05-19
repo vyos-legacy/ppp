@@ -5,6 +5,41 @@
 DESTDIR=/usr/local
 SYSCONF=/etc
 
+# Parse arguments
+while [ $# -gt 0 ]; do
+    arg=$1
+    val=
+    shift
+    case $arg in
+	*=*)
+	    val=`expr "x$arg" : 'x[^=]*=\(.*\)'`
+	    arg=`expr "x$arg" : 'x\([^=]*\)=.*'`
+	    ;;
+	--prefix|--sysconf|--with-linux)
+	    if [ $# -eq 0 ]; then
+		echo "error: the $arg argument requires a value" 1>&2
+		exit 1
+	    fi
+	    val=$1
+	    shift
+	    ;;
+    esac
+    case $arg in
+	--prefix)	DESTDIR=$val ;;
+	--sysconfdir)	SYSCONF=$val ;;
+        --with-linux)       ksrc="$val" ;;
+    esac
+done
+
+mkmkf() {
+    rm -f $2
+    if [ -f $1 ]; then
+	echo "  $2 <= $1"
+	sed -e "s,@DESTDIR@,$DESTDIR,g" -e "s,@SYSCONF@,$SYSCONF,g" $1 >$2
+    fi
+}
+
+if [ -d "$ksrc" ]; then
 #  if [ -d /NextApps ]; then
 #    system="NeXTStep"
 #  else
@@ -17,7 +52,7 @@ state="unknown"
 case $system in
   Linux)
     makext="linux";
-    ksrc="linux";
+    [ "$ksrc" ] || ksrc="linux";
     state="known";;
   SunOS)
     karch=`/usr/bin/isainfo -k`
@@ -156,40 +191,6 @@ case $state in
     echo "Configuring for $system";;
 esac
 
-# Parse arguments
-while [ $# -gt 0 ]; do
-    arg=$1
-    val=
-    shift
-    case $arg in
-	*=*)
-	    val=`expr "x$arg" : 'x[^=]*=\(.*\)'`
-	    arg=`expr "x$arg" : 'x\([^=]*\)=.*'`
-	    ;;
-	--prefix|--sysconf)
-	    if [ $# -eq 0 ]; then
-		echo "error: the $arg argument requires a value" 1>&2
-		exit 1
-	    fi
-	    val=$1
-	    shift
-	    ;;
-    esac
-    case $arg in
-	--prefix)	DESTDIR=$val ;;
-	--sysconfdir)	SYSCONF=$val ;;
-    esac
-done
-
-mkmkf() {
-    rm -f $2
-    if [ -f $1 ]; then
-	echo "  $2 <= $1"
-	sed -e "s,@DESTDIR@,$DESTDIR,g" -e "s,@SYSCONF@,$SYSCONF,g" $1 >$2
-    fi
-}
-
-if [ -d "$ksrc" ]; then
     echo "Creating Makefiles."
     mkmkf $ksrc/Makefile.top Makefile
     mkmkf $ksrc/Makedefs$compiletype Makedefs.com
