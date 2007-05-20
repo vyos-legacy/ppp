@@ -1,3 +1,7 @@
 *.o
 *.so
 *.a
+chat/chat
+pppd/pppd
+pppdump/pppdump
+pppstats/pppstats
