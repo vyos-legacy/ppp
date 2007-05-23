@@ -348,5 +348,10 @@ persist
 # The filter expression is akin to that of tcpdump(1)
 #active-filter <filter-expression>
 
+multilink
+
+ipcp-accept-local
+ipcp-accept-remote
+
 ktune
 # ---<End of File>---
