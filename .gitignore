@@ -5,3 +5,4 @@ chat/chat
 pppd/pppd
 pppdump/pppdump
 pppstats/pppstats
+pppd/plugins/rp-pppoe/pppoe-discovery
