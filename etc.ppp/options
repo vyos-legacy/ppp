@@ -96,7 +96,7 @@ hide-password
 # attempt to initiate a connection; if no reply is received from the
 # peer, pppd will then just wait passively for a valid LCP packet from
 # the peer (instead of exiting, as it does without this option).
-#passive
+passive
 
 # With this option, pppd will not transmit LCP packets to initiate a
 # connection until a valid LCP packet is received from the peer (as for
@@ -211,7 +211,7 @@ proxyarp
 # Use the system password database for authenticating the peer using
 # PAP. Note: mgetty already provides this option. If this is specified
 # then dialin from users using a script under Linux to fire up ppp wont work.
-# login
+login
 
 # If this option is given, pppd will send an LCP echo-request frame to the
 # peer every n seconds. Normally the peer should respond to the echo-request
@@ -309,7 +309,7 @@ persist
 
 # Terminate after n consecutive failed connection attempts.
 # A value of 0 means no limit. The default value is 10.
-#maxfail <n>
+maxfail 0
 
 # Initiate the link only on demand, i.e. when data traffic is present. 
 # With this option, the remote IP address must be specified by the user on
@@ -352,6 +352,7 @@ multilink
 
 ipcp-accept-local
 ipcp-accept-remote
+mppe-stateful
 
 ktune
 # ---<End of File>---
