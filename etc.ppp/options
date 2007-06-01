@@ -301,11 +301,10 @@ noipx
 # Exit once a connection has been made and terminated. This is the default,
 # unless the `persist' or `demand' option has been specified.
 #nopersist
-persist
 
 # Do not exit after a connection is terminated; instead try to reopen
 # the connection.
-#persist
+persist
 
 # Terminate after n consecutive failed connection attempts.
 # A value of 0 means no limit. The default value is 10.
