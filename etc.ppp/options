@@ -352,6 +352,7 @@ multilink
 ipcp-accept-local
 ipcp-accept-remote
 mppe-stateful
+updetach
 
 ktune
 # ---<End of File>---
