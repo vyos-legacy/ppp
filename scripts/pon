@@ -37,4 +37,4 @@ The file /etc/ppp/peers/$1 does not exist.
   exit 1
 fi
 
-exec /usr/sbin/pppd call ${@:-provider}
+exec /sbin/pppd call ${@:-provider}

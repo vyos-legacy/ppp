@@ -17,6 +17,11 @@ all:
 	cd pppdump; $(MAKE) $(MFLAGS) all
 
 install: $(BINDIR) $(MANDIR)/man8 install-progs install-devel
+	$(INSTALL) -c -m 755 scripts/pon $(BINDIR)/.
+	$(INSTALL) -c -m 755 scripts/poff $(BINDIR)/.
+	$(INSTALL) -c -m 755 scripts/plog $(BINDIR)/.
+	$(INSTALL) -c -m 755 scripts/ppp-off $(BINDIR)/.
+	$(INSTALL) -c -m 755 scripts/palllon $(BINDIR)/.
 
 install-progs:
 	cd chat; $(MAKE) $(MFLAGS) install
