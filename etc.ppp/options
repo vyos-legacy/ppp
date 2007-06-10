@@ -347,12 +347,12 @@ maxfail 0
 # The filter expression is akin to that of tcpdump(1)
 #active-filter <filter-expression>
 
-multilink
-
+# Vyatta selected options
+#multilink
 ipcp-accept-local
 ipcp-accept-remote
 mppe-stateful
 updetach
-
 ktune
+
 # ---<End of File>---
