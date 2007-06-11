@@ -1,0 +1,16 @@
+ppp (2.4.4rel-1) unstable; urgency=high
+
+  The /etc/init.d/ppp init script has been removed.
+  This removes support for the deprecated /etc/ppp/ppp_on_boot feature.
+
+ -- Marco d'Itri <md@linux.it>  Sun,  9 Jul 2006 18:38:54 +0200
+
+ppp (2.4.3-20041231+3) unstable; urgency=medium
+
+  * Removed patch 057_pppoe-interface-change which was refused by the
+    upstream maintainer. Now users must arrange for the ethernet
+    interface used for PPPoE to be up.
+  * The PPPoA plugin does not require anymore the libatm1 package to be
+    installed.
+
+ -- Marco d'Itri <md@linux.it>  Sun, 20 Feb 2005 20:34:00 +0100
