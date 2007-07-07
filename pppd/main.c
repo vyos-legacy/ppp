@@ -1063,8 +1063,22 @@ get_input()
     /*
      * Toss all non-LCP packets unless LCP is OPEN.
      */
-    if (protocol != PPP_LCP && lcp_fsm[0].state != OPENED) {
-	dbglog("Discarded non-LCP packet when LCP not open");
+
+   if (doing_multilink && bundle_unit >= 0) {
+	/* Do not check for lcp state open if one of the
+	   multilink bundles is used.  This fixes the bug
+	   where: MASTER & SLAVE are disconnected and SLAVE
+           link is re-established.  In this scenario it is possible
+           for the MASTER device to receive IPCP packet while its
+           FSM is still down.  We allow IPCP ack while MASTER is
+           down in order to restore SLAVE connection  
+	
+	   GO THROUGHT 
+
+           */
+    } else if (protocol != PPP_LCP && lcp_fsm[0].state != OPENED) {
+	dbglog("Discarded non-LCP packet when LCP not open %d %d",
+		doing_multilink, multilink_in_bundle);
 	return;
     }
 
@@ -1072,14 +1086,28 @@ get_input()
      * Until we get past the authentication phase, toss all packets
      * except LCP, LQR and authentication packets.
      */
-    if (phase <= PHASE_AUTHENTICATE
+     if (doing_multilink && bundle_unit >= 0) {
+
+	 /* Do not check for lcp state open if one of the
+           multilink bundles is used.  This fixes the bug 
+           where: MASTER & SLAVE are disconnected and SLAVE 
+           link is re-established.  In this scenario it is possible 
+           for the MASTER device to receive IPCP packet while its 
+           FSM is still down.  We allow IPCP ack while MASTER is 
+           down in order to restore SLAVE connection  
+        
+           GO THROUGHT 
+
+           */
+
+   } else if (phase <= PHASE_AUTHENTICATE
 	&& !(protocol == PPP_LCP || protocol == PPP_LQR
 	     || protocol == PPP_PAP || protocol == PPP_CHAP ||
 		protocol == PPP_EAP)) {
 	dbglog("discarding proto 0x%x in phase %d",
 		   protocol, phase);
 	return;
-    }
+   }
 
     /*
      * Upcall the proper protocol input routine.
