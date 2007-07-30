@@ -1,0 +1,7 @@
+list=`cd /etc/ppp/peers;echo wan*`
+for i in $list
+do
+	echo -n "STARTED ">>/var/log/$i.log
+	date>>/var/log/$i.log
+	pppd call $i </dev/null >>/var/log/$i.log&
+done
