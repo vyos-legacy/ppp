@@ -211,7 +211,7 @@ proxyarp
 # Use the system password database for authenticating the peer using
 # PAP. Note: mgetty already provides this option. If this is specified
 # then dialin from users using a script under Linux to fire up ppp wont work.
-login
+# login
 
 # If this option is given, pppd will send an LCP echo-request frame to the
 # peer every n seconds. Normally the peer should respond to the echo-request
