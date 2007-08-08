@@ -165,7 +165,7 @@ passive
 # setting up /etc/syslog.conf appropriately (see syslog.conf(5)).  (If
 # pppd is compiled with extra debugging enabled, it will log messages
 # using facility local2 instead of daemon).
-debug
+#debug
 
 # Append the domain name <d> to the local host name for authentication
 # purposes.  For example, if gethostname() returns the name porsche,
