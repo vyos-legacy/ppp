@@ -1,0 +1,6 @@
+#!/bin/sh
+
+PPP_IPPARAM="$6"
+ifconfig "$1" down
+ifrename -i "$1" -n "$PPP_IPPARAM"
+ifconfig "$PPP_IPPARAM" up
