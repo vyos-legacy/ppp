@@ -33,7 +33,6 @@ asyncmap 0
 # future releases of pppd. Use the call option (see manpage) to disable
 # authentication for specific peers.
 #auth
-noauth
 
 # Use hardware flow control (i.e. RTS/CTS) to control the flow of data
 # on the serial port.
