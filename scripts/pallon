@@ -26,10 +26,7 @@
 # **** End License ****
 
 # first make sure that all pppd's are stopped
-while poff -a 2>/dev/null >/dev/null
-do
-	sleep 1
-done
+poff -a 2>/dev/null >/dev/null
 
 # now start them all back up
 for i in `cd /etc/ppp/peers; ls wan* 2>/dev/null`

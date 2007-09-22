@@ -87,11 +87,25 @@ if test "$#" -eq 0 -o "$MODE" = "all" ; then
         echo "$0: $KILL failed.  None ${DONE}."
         exit 1
     }
+
+    i = 0
+    while [ pidof pppd >/dev/null ]
+    do
+	sleep 1
+	[ $i -gt 30 ] && exit 1
+	i=`expr $i + 1`
+    done
+
     exit 0
 fi
 
 # There is an argument, so kill the pppd started on that provider.
-PID=`ps axw | grep "\<pppd .*call $1 *\$" | awk '{print $1}'`
+get_pid()
+{
+	PID=`ps axw | grep "\<pppd .*call $1.1 *\$" | awk '{print $1}'`
+}
+
+get_pid
 if test -n "$PID" ; then
     $KILL -$SIG $PID || {
         echo "$0: $KILL failed.  None ${DONE}."
@@ -101,4 +115,15 @@ else
    echo "$0: I could not find a pppd process for provider '$1'. None ${DONE}."
    exit 1
 fi
+
+i = 0
+while true
+do
+    get_pid
+    [ ! "$PID" ] && exit 0
+    sleep 1
+    [ $i -gt 30 ] && exit 1
+    i=`expr $i + 1`
+done
+
 exit 0
