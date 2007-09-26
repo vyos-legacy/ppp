@@ -59,6 +59,7 @@ case $FLAG in
  "?") exit 1;
 esac
 
+XXX="$1"
 # Get the PIDs of all the pppds running.  Could also get these from
 # /var/run, but pppd doesn't create .pid files until ppp is up.
 PIDS=`pidof pppd`
@@ -88,8 +89,10 @@ if test "$#" -eq 0 -o "$MODE" = "all" ; then
         exit 1
     }
 
-    i = 0
-    while [ pidof pppd >/dev/null ]
+    [ "$MODE" != all -a "$SIG" != HUP ] && exit 0
+
+    i=0
+    while pidof pppd >/dev/null
     do
 	sleep 1
 	[ $i -gt 30 ] && exit 1
@@ -105,7 +108,7 @@ get_pid()
 	PID=`ps axw | grep "\<pppd .*call $1.1 *\$" | awk '{print $1}'`
 }
 
-get_pid
+get_pid "$1"
 if test -n "$PID" ; then
     $KILL -$SIG $PID || {
         echo "$0: $KILL failed.  None ${DONE}."
@@ -116,10 +119,12 @@ else
    exit 1
 fi
 
-i = 0
+[ "$MODE" != all -a "$SIG" != HUP ] && exit 0
+
+i=0
 while true
 do
-    get_pid
+    get_pid $1
     [ ! "$PID" ] && exit 0
     sleep 1
     [ $i -gt 30 ] && exit 1
