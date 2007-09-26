@@ -1,0 +1,62 @@
+#!/bin/sh
+#
+# sangoma:	Starts pppd and modified ppp_ kernel modules to support mlppp
+#		without fragmentation or compression
+#
+# chkconfig:	2345 15 15
+# description:	Sangoma start and stop script for the A104 and no fragmentation
+#		Thanks, Nenad!
+#
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+
+start() 
+{
+        echo -n $"Starting sangoma: "
+	/usr/sbin/wanrouter start
+	/sbin/modprobe ppp_generic mp_debug=1 mp_frag_disable=1 mp_prot_compress_disable=1
+	/usr/sbin/pppd call isp_wanpipe1
+	/usr/sbin/pppd call isp_wanpipe2
+	/usr/sbin/pppd call isp_wanpipe3
+	/usr/sbin/pppd call isp_wanpipe4
+	echo Waiting for pppd to start....
+#	/bin/sleep 15
+#	/sbin/ip route replace default via 63.145.159.165
+        echo
+}
+
+stop() 
+{
+        echo -n $"Shutting down sangoma: "
+	/usr/bin/killall pppd
+	/bin/sleep 5
+	/sbin/modprobe -r ppp_synctty ppp_generic
+	/usr/sbin/wanrouter stop
+        echo
+}
+
+# See how we were called.
+case "$1" in
+  start)
+	start
+        ;;
+  stop)
+	stop
+        ;;
+  restart|reload)
+	stop
+	echo Waiting for pppd shutdown....
+	sleep 15
+	start
+	;;
+  status)
+  	wanrouter status
+	;;
+  *)
+        echo $"Usage: $0 {start|stop|restart|reload|status}"
+        exit 1
+esac
+
+exit 0
