@@ -105,7 +105,7 @@ fi
 # There is an argument, so kill the pppd started on that provider.
 get_pid()
 {
-	PID=`ps axw | grep "\<pppd .*call $1.1 *\$" | awk '{print $1}'`
+	PID=`ps axw | grep "\<pppd .*call $1 *\$" | awk '{print $1}'`
 }
 
 get_pid "$1"
