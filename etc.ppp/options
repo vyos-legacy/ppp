@@ -347,11 +347,11 @@ maxfail 0
 #active-filter <filter-expression>
 
 # Vyatta selected options
-#multilink
 ipcp-accept-local
 ipcp-accept-remote
 mppe-stateful
 updetach
 ktune
+lcp-max-configure 99999
 
 # ---<End of File>---
