@@ -49,6 +49,7 @@ bool multilink_master;		/* we own the multilink bundle */
 
 extern TDB_CONTEXT *pppdb;
 extern char db_key[];
+extern int netif_qlen;
 
 static void make_bundle_links __P((int append));
 static void remove_bundle_link __P((void));
@@ -101,6 +102,9 @@ mp_check_options()
  * Make a new bundle or join us to an existing bundle
  * if we are doing multilink.
  */
+
+#define USE_MRU 0
+
 int
 mp_join_bundle()
 {
@@ -128,7 +132,11 @@ mp_join_bundle()
 		 return 1;
 	}
 
-	mtu = MIN(ho->mrru, ao->mru);
+	if (USE_MRU && ho->mru && ho->neg_mru) {
+		mtu = MIN(ho->mru, ao->mru);
+	} else {
+		mtu = MIN(ho->mrru, ao->mru);
+	}
 	if (bundle_unit>=0) {
 		unit=bundle_unit;
 		doing_multilink = 1;
@@ -136,6 +144,7 @@ mp_join_bundle()
 		goto ml_auto_attach;
 
 	}
+
 
 	if (!go->neg_mrru || !ho->neg_mrru) {
             	FUNC_DEBUG("\nNot doing Multilink  %s:%d\n",__FUNCTION__,__LINE__);
@@ -149,11 +158,13 @@ mp_join_bundle()
 			/* already have a bundle */
 			cfg_bundle(0, 0, 0, 0);
 			netif_set_mtu(0, mtu);
+			netif_set_qlen(0, netif_qlen);
 			return 0;
 		}
 		make_new_bundle(0, 0, 0, 0);
 		set_ifunit(1);
 		netif_set_mtu(0, mtu);
+		netif_set_qlen(0, netif_qlen);
 		return 0;
 	}
 
@@ -196,13 +207,20 @@ mp_join_bundle()
 	 * For demand mode, we only need to configure the bundle
 	 * and attach the link.
 	 */
-	mtu = MIN(ho->mrru, ao->mru);
+	if (USE_MRU && ho->mru && ho->neg_mru) {
+		mtu = MIN(ho->mru, ao->mru);
+	} else {
+		mtu = MIN(ho->mrru, ao->mru);
+	}
 	if (demand) {
-		cfg_bundle(go->mrru, ho->mrru, go->neg_ssnhf, ho->neg_ssnhf);
+		//cfg_bundle(go->mrru, ho->mrru, go->neg_ssnhf, ho->neg_ssnhf);
+		cfg_bundle(mtu, mtu, go->neg_ssnhf, ho->neg_ssnhf);
 		netif_set_mtu(0, mtu);
+		netif_set_qlen(0, netif_qlen);
 		script_setenv("BUNDLE", bundle_id + 7, 1);
 		return 0;
 	}
+
 
 	/*
 	 * Check if the bundle ID is already in the database.
@@ -262,9 +280,14 @@ ml_auto_attach:
 
 	/* Initialize bundle_unit, so next time
 	   master can just re-attach to it */
-	bundle_unit = make_new_bundle(go->mrru, ho->mrru, go->neg_ssnhf, ho->neg_ssnhf);
+	if (USE_MRU) {
+	bundle_unit = make_new_bundle(mtu, mtu, go->neg_ssnhf, ho->neg_ssnhf);
+	} else {
+	bundle_unit = make_new_bundle(ho->mrru, ho->mrru, go->neg_ssnhf, ho->neg_ssnhf);
+	}
 	set_ifunit(1);
 	netif_set_mtu(0, mtu);
+	netif_set_qlen(0, netif_qlen);
 	script_setenv("BUNDLE", bundle_id + 7, 1);
 	make_bundle_links(0);
 	unlock_db();
@@ -301,7 +324,7 @@ void mp_bundle_terminated()
         FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 	bundle_terminating = 1;
 	upper_layers_down(0);
-	notice("Connection terminated.");
+	notice("Connection terminated: bundle terminated.");
 	print_link_stats();
 	if (!demand) {
 		remove_pidfiles();
@@ -316,7 +339,7 @@ void mp_bundle_terminated()
 	tdb_delete(pppdb, key);
 	unlock_db();
 	
-new_phase(PHASE_DEAD);
+	new_phase(PHASE_DEAD);
 }
 
 static void make_bundle_links(int append)

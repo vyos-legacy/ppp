@@ -628,6 +628,7 @@ int  get_ppp_stats __P((int, struct pppd_stats *));
 				/* Return link statistics */
 void netif_set_mtu __P((int, int)); /* Set PPP interface MTU */
 int  netif_get_mtu __P((int));      /* Get PPP interface MTU */
+void netif_set_qlen __P((int, int)); /* Set PPP interface QLEN */
 int  sifvjcomp __P((int, int, int, int));
 				/* Configure VJ TCP header compression */
 int  sifup __P((int));		/* Configure i/f up for one protocol */
@@ -813,6 +814,7 @@ extern void (*snoop_send_hook) __P((unsigned char *p, int len));
  * Debug macros.  Slightly useful for finding bugs in pppd, not particularly
  * useful for finding out why your connection isn't being established.
  */
+#define DEBUGALL
 #ifdef DEBUGALL
 #define DEBUGMAIN	1
 #define DEBUGFSM	1
@@ -822,6 +824,8 @@ extern void (*snoop_send_hook) __P((unsigned char *p, int len));
 #define DEBUGUPAP	1
 #define DEBUGCHAP	1
 #endif
+
+#define PPP_DFLT_QLEN 100
 
 #ifndef LOG_PPP			/* we use LOG_LOCAL2 for syslog by default */
 #if defined(DEBUGMAIN) || defined(DEBUGFSM) || defined(DEBUGSYS) \

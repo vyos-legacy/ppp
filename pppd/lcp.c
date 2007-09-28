@@ -57,6 +57,7 @@
 #include "magic.h"
 
 static const char rcsid[] = RCSID;
+extern int netif_qlen;
 
 /*
  * When the link comes up we want to be able to wait for a short while,
@@ -1594,7 +1595,7 @@ FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);	    /*
 		orc = CONFNAK;		/* Nak CI */
 		PUTCHAR(CI_MRU, nakp);
 		PUTCHAR(CILEN_SHORT, nakp);
-		PUTSHORT(MINMRU, nakp);	/* Give him a hint */
+		PUTSHORT(cishort, nakp);	/* Give him a hint */
 		break;
 	    }
 	    ho->neg_mru = 1;		/* Remember he sent MRU */
@@ -1827,6 +1828,14 @@ FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);	    /*
 	    }
 
 	    GETSHORT(cishort, p);
+            if (cishort < MINMRRU) {
+                orc = CONFNAK;          /* Nak CI */
+                PUTCHAR(CI_MRRU, nakp);
+                PUTCHAR(CILEN_SHORT, nakp);
+                PUTSHORT(cishort, nakp); /* Give him a hint */
+                break;
+            }
+
 	    /* possibly should insist on a minimum/maximum MRRU here */
 	    ho->neg_mrru = 1;
 	    ho->mrru = cishort;
@@ -1949,6 +1958,7 @@ lcp_up(f)
     if (!(multilink && go->neg_mrru && ho->neg_mrru))
 #endif /* HAVE_MULTILINK */
 	netif_set_mtu(f->unit, MIN(MIN(mtu, mru), ao->mru));
+	netif_set_qlen(f->unit, netif_qlen);
     ppp_send_config(f->unit, mtu,
 		    (ho->neg_asyncmap? ho->asyncmap: 0xffffffff),
 		    ho->neg_pcompression, ho->neg_accompression);

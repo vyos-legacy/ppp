@@ -626,10 +626,10 @@ link_terminated(unit)
     }
 
     if (!doing_multilink) {
-	notice("Connection terminated.");
+	notice("Connection terminated: no multilink.");
 	print_link_stats();
     } else
-	notice("Link terminated.");
+	notice("Link terminated: multilink running.");
 
     /*
      * Delete pid files before disestablishing ppp.  Otherwise it

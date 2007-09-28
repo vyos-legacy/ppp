@@ -919,7 +919,15 @@ void set_up_tty(int tty_fd, int local)
     int speed;
     struct termios tios;
 
-	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+
+    /* Nenad: If we are in sync mode 
+     * dont bother with analog stuff */
+
+    if (sync_serial) {
+	return;
+    }
+
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
     setdtr(tty_fd, 1);
     if (tcgetattr(tty_fd, &tios) < 0) {
@@ -1178,13 +1186,39 @@ netif_set_mtu(int unit, int mtu)
 {
     struct ifreq ifr;
 
+    /* Nenad: If not running in sync mode leave mtu as default */
+    if (!sync_serial) {
+	return;
+    }
+
+
     memset (&ifr, '\0', sizeof (ifr));
     strlcpy(ifr.ifr_name, ifname, sizeof (ifr.ifr_name));
     ifr.ifr_mtu = mtu;
 
     if (ifunit >= 0 && ioctl(sock_fd, SIOCSIFMTU, (caddr_t) &ifr) < 0)
 	error("ioctl(SIOCSIFMTU): %m (line %d)", __LINE__);
+    
 }
+
+/*
+ * netif_set_qlen - set the QLEN on the PPP network interface.
+ */
+void
+netif_set_qlen(int unit, int qlen)
+{
+    struct ifreq ifr;
+
+    memset (&ifr, '\0', sizeof (ifr));
+    strlcpy(ifr.ifr_name, ifname, sizeof (ifr.ifr_name));
+    ifr.ifr_qlen = qlen;
+
+    if (ifunit >= 0 && ioctl(sock_fd, SIOCSIFTXQLEN, (caddr_t) &ifr) < 0)
+        error("ioctl(SIOCSIFMTU): %m (line %d)", __LINE__);
+
+}
+
+
 
 /*
  * netif_get_mtu - get the MTU on the PPP network interface.

@@ -155,7 +155,16 @@ fsm_lowerdown(f)
     case OPENED:
 	if( f->callbacks->down )
 	    (*f->callbacks->down)(f);
+
+	/* Nenad: Set the state back to CLOSED
+         * instead of STARTING. Because we will
+	 * guarantee to restart protocol */
+#if 1
+	f->state = CLOSED;
+#else
 	f->state = STARTING;
+#endif
+
 	break;
 
     default:

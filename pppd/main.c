@@ -128,6 +128,7 @@ char ifname[32];		/* Interface name */
 int ifunit;			/* Interface unit number */
 int bundle_unit=-1;		/* Unit for Master device */
 int multilink_in_bundle=0;	/* Are we in multilink bundle */
+int netif_qlen=PPP_DFLT_QLEN;
 
 struct channel *the_channel;
 
@@ -1034,7 +1035,10 @@ get_input()
     if (len < 0)
 	return;
 
-    if (len == 0) {
+  if (len == 0) {
+  	//if (doing_multilink && bundle_unit >= 0) {
+	//	return;
+	//}
 	if (bundle_eof && multilink_master) {
 	    notice("Last channel has disconnected");
 	    mp_bundle_terminated();

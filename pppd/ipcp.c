@@ -82,6 +82,10 @@ void (*ip_down_hook) __P((void)) = NULL;
 /* Hook for a plugin to choose the remote IP address */
 void (*ip_choose_hook) __P((u_int32_t *)) = NULL;
 
+
+static void no_ipcp_up(fsm *f);
+
+
 /* Notifiers for when IPCP goes up and down */
 struct notifier *ip_up_notifier = NULL;
 struct notifier *ip_down_notifier = NULL;
@@ -602,8 +606,14 @@ static void
 ipcp_open(unit)
     int unit;
 {
-    fsm_open(&ipcp_fsm[unit]);
-    ipcp_is_open = 1;
+    if (0) {
+	no_ipcp_up(&ipcp_fsm[unit]);
+    	ipcp_is_open = 1;
+    	ipcp_is_up=1;
+    } else {
+    	fsm_open(&ipcp_fsm[unit]);
+    	ipcp_is_open = 1;
+    }
 }
 
 
@@ -1672,6 +1682,34 @@ ip_demand_conf(u)
     return 1;
 }
 
+static void
+no_ipcp_up(f)
+    fsm *f;
+{
+    ipcp_options *ho = &ipcp_hisoptions[f->unit];
+    ipcp_options *go = &ipcp_gotoptions[f->unit];
+    ipcp_options *wo = &ipcp_wantoptions[f->unit];
+
+    IPCPDEBUG(("no_ipcp: up"));
+
+    ho->ouraddr=wo->ouraddr;
+    ho->neg_addr=wo->ouraddr;
+    ho->hisaddr=wo->hisaddr;
+    go->ouraddr=wo->ouraddr;
+    go->neg_addr=wo->ouraddr;
+    go->hisaddr=wo->hisaddr;
+
+
+	notice("ho-our=%I ho-his=%I go-our=%I go-his=%I wo-our=%I wo-his=%I",
+			ho->ouraddr,ho->hisaddr,
+			go->ouraddr,go->hisaddr,
+			wo->ouraddr,wo->hisaddr);
+
+	notice("local  IP address %I", go->ouraddr);
+        notice("remote IP address %I", ho->hisaddr);
+
+    ipcp_up(f);
+}
 
 /*
  * ipcp_up - IPCP has come UP.
