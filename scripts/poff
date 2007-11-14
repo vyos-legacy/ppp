@@ -89,7 +89,7 @@ if test "$#" -eq 0 -o "$MODE" = "all" ; then
         exit 1
     }
 
-    [ "$MODE" != all -a "$SIG" != HUP ] && exit 0
+    [ "$SIG" != TERM ] && exit 0
 
     i=0
     while pidof pppd >/dev/null
@@ -119,7 +119,7 @@ else
    exit 1
 fi
 
-[ "$MODE" != all -a "$SIG" != TERM ] && exit 0
+[ "$SIG" != TERM ] && exit 0
 
 i=0
 while true
