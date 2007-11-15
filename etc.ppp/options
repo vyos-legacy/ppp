@@ -216,7 +216,7 @@ proxyarp
 # peer every n seconds. Normally the peer should respond to the echo-request
 # by sending an echo-reply. This option can be used with the
 # lcp-echo-failure option to detect that the peer is no longer connected.
-lcp-echo-interval 30
+#lcp-echo-interval 30
 
 # If this option is given, pppd will presume the peer to be dead if n
 # LCP echo-requests are sent without receiving a valid LCP echo-reply.
@@ -225,7 +225,7 @@ lcp-echo-interval 30
 # This option can be used to enable pppd to terminate after the physical
 # connection has been broken (e.g., the modem has hung up) in
 # situations where no hardware modem control lines are available.
-lcp-echo-failure 4
+#lcp-echo-failure 4
 
 # Set the LCP restart interval (retransmission timeout) to <n> seconds
 # (default 3).
@@ -299,11 +299,11 @@ noipx
 
 # Exit once a connection has been made and terminated. This is the default,
 # unless the `persist' or `demand' option has been specified.
-#nopersist
+nopersist
 
 # Do not exit after a connection is terminated; instead try to reopen
 # the connection.
-persist
+#persist
 
 # Terminate after n consecutive failed connection attempts.
 # A value of 0 means no limit. The default value is 10.
