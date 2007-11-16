@@ -40,5 +40,5 @@ fi
 while true
 do
 /sbin/pppd call ${@:-provider}
-sleep 1
+sleep 9
 done&
