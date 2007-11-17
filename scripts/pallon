@@ -33,5 +33,5 @@ for i in `cd /etc/ppp/peers; ls wan* 2>/dev/null`
 do
 	echo -n "STARTED ">>/var/log/$i.log
 	date>>/var/log/$i.log
-	pppd call $i >>/var/log/$i.log&
+	pon $i >>/var/log/$i.log&
 done

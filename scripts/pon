@@ -39,13 +39,15 @@ fi
 
 while true
 do
-/sbin/pppd call ${@:-provider}
-ret=$?
-echo $ret
-case $ret in
- 6 )
-	exit $?	# already locked
-	;;
-esac
-sleep 9
+  /sbin/pppd call ${@:-provider}
+  ret=$?
+  echo $ret
+  case $ret in
+   6 )	# already locked
+  	exit $ret
+  	;;
+  esac
+
+  sleep 9
+
 done&
