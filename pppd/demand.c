@@ -61,6 +61,8 @@ int escape_flag;
 int flush_flag;
 int fcs;
 
+extern int netif_qlen;
+
 struct packet {
     int length;
     struct packet *next;
@@ -95,6 +97,7 @@ demand_conf()
     fcs = PPP_INITFCS;
 
     netif_set_mtu(0, MIN(lcp_allowoptions[0].mru, PPP_MRU));
+    netif_set_qlen(0, netif_qlen);
     if (ppp_send_config(0, PPP_MRU, (u_int32_t) 0, 0, 0) < 0
 	|| ppp_recv_config(0, PPP_MRU, (u_int32_t) 0, 0, 0) < 0)
 	    fatal("Couldn't set up demand-dialled PPP interface: %m");

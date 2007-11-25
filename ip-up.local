@@ -1,0 +1,4 @@
+#!/bin/sh
+
+ifconfig $1 mtu 1494
+ifconfig $1 txqueuelen 300

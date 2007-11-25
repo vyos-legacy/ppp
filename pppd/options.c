@@ -129,6 +129,7 @@ int maxoctets_timeout = 1;   /* default 1 second */
 
 extern option_t auth_options[];
 extern struct stat devstat;
+extern int netif_qlen;
 
 #ifdef PPP_FILTER
 struct	bpf_program pass_filter;/* Filter program for packets to pass */
@@ -257,6 +258,10 @@ option_t general_options[] = {
 
     { "maxfail", o_int, &maxfail,
       "Maximum number of unsuccessful connection attempts to allow",
+      OPT_PRIO },
+    
+    { "netif-qlen", o_int, &netif_qlen,
+      "Length of netif qlen: Default Syncmode: 100  Asyncmode: 3",
       OPT_PRIO },
 
     { "ktune", o_bool, &tune_kernel,

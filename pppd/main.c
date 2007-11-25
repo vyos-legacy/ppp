@@ -126,6 +126,9 @@ static const char rcsid[] = RCSID;
 /* interface vars */
 char ifname[32];		/* Interface name */
 int ifunit;			/* Interface unit number */
+int bundle_unit=-1;		/* Unit for Master device */
+int multilink_in_bundle=0;	/* Are we in multilink bundle */
+int netif_qlen=PPP_DFLT_QLEN;
 
 struct channel *the_channel;
 
@@ -556,7 +559,7 @@ main(argc, argv)
 	/* restore FSMs to original state */
 	lcp_close(0, "");
 
-	if (!persist || asked_to_quit || (maxfail > 0 && unsuccess >= maxfail))
+        if (!persist || asked_to_quit)
 	    break;
 
 	if (demand)
@@ -1032,7 +1035,10 @@ get_input()
     if (len < 0)
 	return;
 
-    if (len == 0) {
+  if (len == 0) {
+  	//if (doing_multilink && bundle_unit >= 0) {
+	//	return;
+	//}
 	if (bundle_eof && multilink_master) {
 	    notice("Last channel has disconnected");
 	    mp_bundle_terminated();
@@ -1061,8 +1067,22 @@ get_input()
     /*
      * Toss all non-LCP packets unless LCP is OPEN.
      */
-    if (protocol != PPP_LCP && lcp_fsm[0].state != OPENED) {
-	dbglog("Discarded non-LCP packet when LCP not open");
+
+   if (doing_multilink && bundle_unit >= 0) {
+	/* Do not check for lcp state open if one of the
+	   multilink bundles is used.  This fixes the bug
+	   where: MASTER & SLAVE are disconnected and SLAVE
+           link is re-established.  In this scenario it is possible
+           for the MASTER device to receive IPCP packet while its
+           FSM is still down.  We allow IPCP ack while MASTER is
+           down in order to restore SLAVE connection  
+	
+	   GO THROUGHT 
+
+           */
+    } else if (protocol != PPP_LCP && lcp_fsm[0].state != OPENED) {
+	dbglog("Discarded non-LCP packet when LCP not open %d %d",
+		doing_multilink, multilink_in_bundle);
 	return;
     }
 
@@ -1070,14 +1090,28 @@ get_input()
      * Until we get past the authentication phase, toss all packets
      * except LCP, LQR and authentication packets.
      */
-    if (phase <= PHASE_AUTHENTICATE
+     if (doing_multilink && bundle_unit >= 0) {
+
+	 /* Do not check for lcp state open if one of the
+           multilink bundles is used.  This fixes the bug 
+           where: MASTER & SLAVE are disconnected and SLAVE 
+           link is re-established.  In this scenario it is possible 
+           for the MASTER device to receive IPCP packet while its 
+           FSM is still down.  We allow IPCP ack while MASTER is 
+           down in order to restore SLAVE connection  
+        
+           GO THROUGHT 
+
+           */
+
+   } else if (phase <= PHASE_AUTHENTICATE
 	&& !(protocol == PPP_LCP || protocol == PPP_LQR
 	     || protocol == PPP_PAP || protocol == PPP_CHAP ||
 		protocol == PPP_EAP)) {
 	dbglog("discarding proto 0x%x in phase %d",
 		   protocol, phase);
 	return;
-    }
+   }
 
     /*
      * Upcall the proper protocol input routine.

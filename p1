@@ -1,0 +1,478 @@
+using channel 262
+Starting negotiation on /dev/ttyWP0
+sent [LCP ConfReq id=0x1 <magic 0xa6957c20> <mrru 1500> <endpoint [MAC:00:e0:81:02:16:67]>]
+rcvd [LCP ConfAck id=0x1 <magic 0xa6957c20> <mrru 1500> <endpoint [MAC:00:e0:81:02:16:67]>]
+sent [LCP ConfReq id=0x1 <magic 0xa6957c20> <mrru 1500> <endpoint [MAC:00:e0:81:02:16:67]>]
+rcvd [LCP ConfReq id=0x84 <magic 0x56e426f6> <mrru 1524> <endpoint [local:52.6f.75.74.65.72]>]
+sent [LCP ConfAck id=0x84 <magic 0x56e426f6> <mrru 1524> <endpoint [local:52.6f.75.74.65.72]>]
+rcvd [LCP ConfAck id=0x1 <magic 0xa6957c20> <mrru 1500> <endpoint [MAC:00:e0:81:02:16:67]>]
+sent [LCP EchoReq id=0x0 magic=0xa6957c20]
+Using interface ppp0
+New bundle ppp0 created
+sent [IPCP ConfReq id=0x1 <addr 1.1.1.2>]
+rcvd [LCP EchoRep id=0x0 magic=0x56e426f6]
+rcvd [IPCP ConfReq id=0x1 <addr 1.1.1.1>]
+sent [IPCP ConfAck id=0x1 <addr 1.1.1.1>]
+rcvd [IPCP ConfAck id=0x1 <addr 1.1.1.2>]
+not replacing existing default route via 192.168.1.1
+local  IP address 1.1.1.2
+remote IP address 1.1.1.1
+Script /etc/ppp/ip-up started (pid 29953)
+Script /etc/ppp/ip-up finished (pid 29953), status = 0x0
+No response to 2 echo-requests
+Serial link appears to be disconnected.
+sent [LCP TermReq id=0x2 "Peer not responding"]
+sent [LCP TermReq id=0x3 "Peer not responding"]
+Link terminated.
+using channel 264
+Starting negotiation on /dev/ttyWP0
+sent [LCP ConfReq id=0x4 <magic 0xb0a0b5c8> <mrru 1500> <endpoint [MAC:00:e0:81:02:16:67]>]
+sent [LCP ConfReq id=0x4 <magic 0xb0a0b5c8> <mrru 1500> <endpoint [MAC:00:e0:81:02:16:67]>]
+sent [LCP ConfReq id=0x4 <magic 0xb0a0b5c8> <mrru 1500> <endpoint [MAC:00:e0:81:02:16:67]>]
+lcp_init: 346
+ppp_available: 2032
+mp_check_options: 81
+get_default_epdisc: 464
+lcp_open: 388
+lcp_starting: 1995
+start_link: 553
+set_up_tty: 916
+generic_establish_ppp: 452
+lcp_lowerup: 437
+lcp_resetci: 661
+lcp_cilen: 694
+lcp_addci: 728
+lcp_printpkt: 2034
+epdisc_to_str: 508
+lcp_printpkt: 2034
+epdisc_to_str: 508
+lcp_input: 502
+lcp_ackci: 826
+lcp_cilen: 694
+lcp_addci: 728
+lcp_printpkt: 2034
+epdisc_to_str: 508
+lcp_printpkt: 2034
+epdisc_to_str: 508
+lcp_input: 502
+lcp_reqci: 1548
+lcp_printpkt: 2034
+epdisc_to_str: 508
+lcp_printpkt: 2034
+epdisc_to_str: 508
+lcp_input: 502
+lcp_ackci: 826
+lcp_up: 1925
+lcp_echo_lowerup: 2393
+LcpEchoCheck: 2290
+LcpSendEchoRequest: 2360
+lcp_printpkt: 2034
+link_established: 741
+network_phase: 818
+start_networks: 866
+
+Go to Multilink IF   start_networks:871
+mp_join_bundle: 115
+
+variable doing_multilink is equal to 0
+Changing variable doing_multilink to 1   mp_join_bundle:154
+
+Didn't go to previous 2 IFs   mp_join_bundle:157
+epdisc_to_str: 508
+ 
+Check if the bundle ID is already in the database   mp_join_bundle:206
+
+we have to make a new bundle mp_join_bundle:245
+make_new_bundle: 681
+make_ppp_unit: 621
+cfg_bundle: 654
+make_bundle_links: 308
+Didn't call detach function   start_networks:886
+
+Bring up other protocols   start_networks:896
+continue_networks: 911
+
+num_np_open is 0!
+ None-Empty Protocol!
+
+ ------ 
+Number i = 0
+protp->protocol: 0xc021
+Loop Open is Not NULL! continue_networks:928
+Loop Flag is Not Zero  continue_networks:936
+
+ ------ 
+Number i = 1
+protp->protocol: 0xc023
+Loop Open is NULL! continue_networks:930
+Loop Flag is Not Zero  continue_networks:936
+
+ ------ 
+Number i = 2
+protp->protocol: 0xc223
+Loop Open is NULL! continue_networks:930
+Loop Flag is Not Zero  continue_networks:936
+
+ ------ 
+Number i = 3
+protp->protocol: 0x8021
+Loop Open is Not NULL! continue_networks:928
+Loop Flag is Not Zero  continue_networks:936
+
+protp->protocol: 0x8021
+Open is Not NULL! continue_networks:945
+Flag is Not Zero! continue_networks:953
+
+num_np_open within loop is 1!
+
+ ------ 
+Number i = 4
+protp->protocol: 0x80fd
+Loop Open is Not NULL! continue_networks:928
+Loop Flag is Not Zero  continue_networks:936
+
+ ------ 
+Number i = 5
+protp->protocol: 0x8053
+Loop Open is NULL! continue_networks:930
+Loop Flag is Zero!  continue_networks:934
+
+ ------ 
+Number i = 6
+protp->protocol: 0x802b
+Loop Open is Not NULL! continue_networks:928
+Loop Flag is Zero!  continue_networks:934
+
+ ------ 
+Number i = 7
+protp->protocol: 0xc227
+Loop Open is NULL! continue_networks:930
+Loop Flag is Not Zero  continue_networks:936
+
+num_np_open again is 1!lcp_printpkt: 2034
+lcp_input: 502
+lcp_extcode: 522
+lcp_received_echo_reply: 2332
+sifup: 2261
+get_ppp_stats: 1358
+np_up: 1126
+LcpEchoTimeout: 2312
+LcpEchoCheck: 2290
+LcpSendEchoRequest: 2360
+lcp_input: 502
+lcp_extcode: 522
+lcp_received_echo_reply: 2332
+LcpEchoTimeout: 2312
+LcpEchoCheck: 2290
+LcpSendEchoRequest: 2360
+lcp_input: 502
+lcp_extcode: 522
+lcp_received_echo_reply: 2332
+LcpEchoTimeout: 2312
+LcpEchoCheck: 2290
+LcpSendEchoRequest: 2360
+lcp_input: 502
+lcp_extcode: 522
+lcp_received_echo_reply: 2332
+lcp_input: 502
+lcp_extcode: 522
+LcpEchoTimeout: 2312
+LcpEchoCheck: 2290
+LcpSendEchoRequest: 2360
+lcp_input: 502
+lcp_extcode: 522
+lcp_received_echo_reply: 2332
+LcpEchoTimeout: 2312
+LcpEchoCheck: 2290
+LcpSendEchoRequest: 2360
+LcpEchoTimeout: 2312
+LcpEchoCheck: 2290
+LcpSendEchoRequest: 2360
+LcpEchoTimeout: 2312
+LcpEchoCheck: 2290
+LcpSendEchoRequest: 2360
+LcpLinkFailure: 2273
+lcp_close: 409
+lcp_down: 1974
+lcp_echo_lowerdown: 2414
+link_down: 686
+lcp_printpkt: 2034
+lcp_printpkt: 2034
+lcp_finished: 2007
+link_terminated: 615
+tty_disestablish_ppp: 548
+generic_disestablish_ppp: 592
+mp_exit_bundle: 259
+remove_bundle_link: 349
+lcp_lowerdown: 466
+restore_tty: 1002
+lcp_close: 409
+lcp_open: 388
+lcp_starting: 1995
+start_link: 553
+set_up_tty: 916
+generic_establish_ppp: 452
+lcp_lowerup: 437
+lcp_resetci: 661
+lcp_cilen: 694
+lcp_addci: 728
+lcp_printpkt: 2034
+epdisc_to_str: 508
+lcp_cilen: 694
+lcp_addci: 728
+lcp_printpkt: 2034
+epdisc_to_str: 508
+lcp_cilen: 694
+lcp_addci: 728
+lcp_printpkt: 2034
+epdisc_to_str: 508
+lcp_cilen: 694
+lsent [LCP ConfReq id=0x4 <magic 0xb0a0b5c8> <mrru 1500> <endpoint [MAC:00:e0:81:02:16:67]>]
+sent [LCP ConfReq id=0x4 <magic 0xb0a0b5c8> <mrru 1500> <endpoint [MAC:00:e0:81:02:16:67]>]
+sent [LCP ConfReq id=0x4 <magic 0xb0a0b5c8> <mrru 1500> <endpoint [MAC:00:e0:81:02:16:67]>]
+sent [LCP ConfReq id=0x4 <magic 0xb0a0b5c8> <mrru 1500> <endpoint [MAC:00:e0:81:02:16:67]>]
+sent [LCP ConfReq id=0x4 <magic 0xb0a0b5c8> <mrru 1500> <endpoint [MAC:00:e0:81:02:16:67]>]
+sent [LCP ConfReq id=0x4 <magic 0xb0a0b5c8> <mrru 1500> <endpoint [MAC:00:e0:81:02:16:67]>]
+sent [LCP ConfReq id=0x4 <magic 0xb0a0b5c8> <mrru 1500> <endpoint [MAC:00:e0:81:02:16:67]>]
+LCP: timeout sending Config-Requests
+Connection terminated.
+Modem hangup
+using channel 265
+Starting negotiation on /dev/ttyWP0
+sent [LCP ConfReq id=0x5 <magic 0x937f6e59> <mrru 1500> <endpoint [MAC:00:e0:81:02:16:67]>]
+sent [LCP ConfReq id=0x5 <magic 0x937f6e59> <mrru 1500> <endpoint [MAC:00:e0:81:02:16:67]>]
+rcvd [LCP ConfReq id=0x85 <magic 0x56e521e2> <mrru 1524> <endpoint [local:52.6f.75.74.65.72]>]
+sent [LCP ConfAck id=0x85 <magic 0x56e521e2> <mrru 1524> <endpoint [local:52.6f.75.74.65.72]>]
+sent [LCP ConfReq id=0x5 <magic 0x937f6e59> <mrru 1500> <endpoint [MAC:00:e0:81:02:16:67]>]
+rcvd [LCP ConfAck id=0x5 <magic 0x937f6e59> <mrru 1500> <endpoint [MAC:00:e0:81:02:16:67]>]
+sent [LCP EchoReq id=0x0 magic=0x937f6e59]
+Using interface ppp0
+New bundle ppp0 created
+rcvd [LCP EchoRep id=0x0 magic=0x56e521e2]
+sent [LCP EchoReq id=0x1 magic=0x937f6e59]
+rcvd [LCP EchoRep id=0x1 magic=0x56e521e2]
+rcvd [LCP EchoReq id=0x1 magic=0x56e521e2 6a 54 11 04]
+sent [LCP EchoRep id=0x1 magic=0x937f6e59 6a 54 11 04]
+sent [LCP EchoReq id=0x2 magic=0x937f6e59]
+rcvd [LCP EchoRep id=0x2 magic=0x56e521e2]
+sent [LCP EchoReq id=0x3 magic=0x937f6e59]
+rcvd [LCP EchoRep id=0x3 magic=0x56e521e2]
+sent [LCP EchoReq id=0x4 magic=0x937f6e59]
+rcvd [LCP EchoRep id=0x4 magic=0x56e521e2]
+Terminating on signal 2
+cp_addci: 728
+lcp_printpkt: 2034
+epdisc_to_str: 508
+lcp_cilen: 694
+lcp_addci: 728
+lcp_printpkt: 2034
+epdisc_to_str: 508
+lcp_cilen: 694
+lcp_addci: 728
+lcp_printpkt: 2034
+epdisc_to_str: 508
+lcp_cilen: 694
+lcp_addci: 728
+lcp_printpkt: 2034
+epdisc_to_str: 508
+lcp_cilen: 694
+lcp_addci: 728
+lcp_printpkt: 2034
+epdisc_to_str: 508
+lcp_cilen: 694
+lcp_addci: 728
+lcp_printpkt: 2034
+epdisc_to_str: 508
+lcp_cilen: 694
+lcp_addci: 728
+lcp_printpkt: 2034
+epdisc_to_str: 508
+lcp_finished: 2007
+link_terminated: 615
+tty_disestablish_ppp: 548
+generic_disestablish_ppp: 592
+lcp_lowerdown: 466
+lcp_starting: 1995
+restore_tty: 1002
+lcp_lowerdown: 466
+link_terminated: 615
+lcp_close: 409
+lcp_open: 388
+lcp_starting: 1995
+start_link: 553
+set_up_tty: 916
+generic_establish_ppp: 452
+lcp_lowerup: 437
+lcp_resetci: 661
+lcp_cilen: 694
+lcp_addci: 728
+lcp_printpkt: 2034
+epdisc_to_str: 508
+lcp_cilen: 694
+lcp_addci: 728
+lcp_printpkt: 2034
+epdisc_to_str: 508
+lcp_printpkt: 2034
+epdisc_to_str: 508
+lcp_input: 502
+lcp_reqci: 1548
+lcp_printpkt: 2034
+epdisc_to_str: 508
+lcp_cilen: 694
+lcp_addci: 728
+lcp_printpkt: 2034
+epdisc_to_str: 508
+lcp_printpkt: 2034
+epdisc_to_str: 508
+lcp_input: 502
+lcp_ackci: 826
+lcp_up: 1925
+lcp_echo_lowerup: 2393
+LcpEchoCheck: 2290
+LcpSendEchoRequest: 2360
+lcp_printpkt: 2034
+link_established: 741
+network_phase: 818
+start_networks: 866
+
+Go to Multilink IF   start_networks:871
+mp_join_bundle: 115
+
+variable doing_multilink is equal to 0
+Changing variable doing_multilink to 1   mp_join_bundle:154
+
+Didn't go to previous 2 IFs   mp_join_bundle:157
+epdisc_to_str: 508
+ 
+Check if the bundle ID is already in the database   mp_join_bundle:206
+parse_num: 417
+parse_num: 417
+owns_unit: 442
+
+we have to make a new bundle mp_join_bundle:245
+make_new_bundle: 681
+make_ppp_unit: 621
+cfg_bundle: 654
+make_bundle_links: 308
+Didn't call detach function   start_networks:886
+
+Bring up other protocols   start_networks:896
+continue_networks: 911
+
+num_np_open is 1!
+ None-Empty Protocol!
+
+ ------ 
+Number i = 0
+protp->protocol: 0xc021
+Loop Open is Not NULL! continue_networks:928
+Loop Flag is Not Zero  continue_networks:936
+
+ ------ 
+Number i = 1
+protp->protocol: 0xc023
+Loop Open is NULL! continue_networks:930
+Loop Flag is Not Zero  continue_networks:936
+
+ ------ 
+Number i = 2
+protp->protocol: 0xc223
+Loop Open is NULL! continue_networks:930
+Loop Flag is Not Zero  continue_networks:936
+
+ ------ 
+Number i = 3
+protp->protocol: 0x8021
+Loop Open is Not NULL! continue_networks:928
+Loop Flag is Not Zero  continue_networks:936
+
+protp->protocol: 0x8021
+Open is Not NULL! continue_networks:945
+Flag is Not Zero! continue_networks:953
+
+num_np_open within loop is 2!
+
+ ------ 
+Number i = 4
+protp->protocol: 0x80fd
+Loop Open is Not NULL! continue_networks:928
+Loop Flag is Not Zero  continue_networks:936
+
+ ------ 
+Number i = 5
+protp->protocol: 0x8053
+Loop Open is NULL! continue_networks:930
+Loop Flag is Zero!  continue_networks:934
+
+ ------ 
+Number i = 6
+protp->protocol: 0x802b
+Loop Open is Not NULL! continue_networks:928
+Loop Flag is Zero!  continue_networks:934
+
+ ------ 
+Number i = 7
+protp->protocol: 0xc227
+Loop Open is NULL! continue_networks:930
+Loop Flag is Not Zero  continue_networks:936
+
+num_np_open again is 2!lcp_printpkt: 2034
+lcp_input: 502
+lcp_extcode: 522
+lcp_received_echo_reply: 2332
+LcpEchoTimeout: 2312
+LcpEchoCheck: 2290
+LcpSendEchoRequest: 2360
+lcp_printpkt: 2034
+lcp_printpkt: 2034
+lcp_input: 502
+lcp_extcode: 522
+lcp_received_echo_reply: 2332
+lcp_printpkt: 2034
+lcp_input: 502
+lcp_extcode: 522
+lcp_printpkt: 2034
+LcpEchoTimeout: 2312
+LcpEchoCheck: 2290
+LcpSendEchoRequest: 2360
+lcp_printpkt: 2034
+lcp_printpkt: 2034
+lcp_input: 502
+lcp_extcode: 522
+lcp_received_echo_reply: 2332
+LcpEchoTimeout: 2312
+LcpEchoCheck: 2290
+LcpSendEchoRequest: 2360
+lcp_printpkt: 2034
+lcp_printpkt: 2034
+lcp_input: 502
+lcp_extcode: 522
+lcp_received_echo_reply: 2332
+LcpEchoTimeout: 2312
+LcpEchoCheck: 2290
+LcpSendEchoRequest: 2360
+lcp_printpkt: 2034
+lcp_printpkt: 2034
+lcp_input: 502
+lcp_extcode: 522
+lcp_received_echo_reply: 2332
+lcp_close: 409
+lcp_down: 1974
+lcp_echo_lowerdown: 2414
+link_down: 686
+lcp_printpkt:sent [LCP TermReq id=0x6 "User request"]
+rcvd [LCP TermAck id=0x6]
+Link terminated.
+ 2034
+lcp_printpkt: 2034
+lcp_input: 502
+lcp_finished: 2007
+link_terminated: 615
+tty_disestablish_ppp: 548
+generic_disestablish_ppp: 592
+mp_exit_bundle: 259
+remove_bundle_link: 349
+lcp_lowerdown: 466
+restore_tty: 1002
+lcp_close: 409
+sifdown: 2289

@@ -49,6 +49,7 @@ bool multilink_master;		/* we own the multilink bundle */
 
 extern TDB_CONTEXT *pppdb;
 extern char db_key[];
+extern int netif_qlen;
 
 static void make_bundle_links __P((int append));
 static void remove_bundle_link __P((void));
@@ -78,7 +79,7 @@ mp_check_options()
 {
 	lcp_options *wo = &lcp_wantoptions[0];
 	lcp_options *ao = &lcp_allowoptions[0];
-
+        FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 	doing_multilink = 0;
 	if (!multilink)
 		return;
@@ -101,6 +102,9 @@ mp_check_options()
  * Make a new bundle or join us to an existing bundle
  * if we are doing multilink.
  */
+
+#define USE_MRU 0
+
 int
 mp_join_bundle()
 {
@@ -112,19 +116,38 @@ mp_join_bundle()
 	char *p;
 	TDB_DATA key, pid, rec;
 
-	if (doing_multilink) {
+        FUNC_DEBUG("%s: %d Doing Multilink=%i BundleUnit=%i\n", __FUNCTION__,__LINE__,doing_multilink, bundle_unit);	
+	
+       	if (multilink_in_bundle) {
+		FUNC_DEBUG("\nMulitlink Running already attached!  %s:%d\n",__FUNCTION__,__LINE__);
 		/* have previously joined a bundle */
 		if (!go->neg_mrru || !ho->neg_mrru) {
+			FUNC_DEBUG("\nHave previously joined a bundle!");
 			notice("oops, didn't get multilink on renegotiation");
 			lcp_close(0, "multilink required");
 			return 0;
 		}
 		/* XXX should check the peer_authname and ho->endpoint
 		   are the same as previously */
-		return 0;
+		 return 1;
 	}
 
+	if (USE_MRU && ho->mru && ho->neg_mru) {
+		mtu = MIN(ho->mru, ao->mru);
+	} else {
+		mtu = MIN(ho->mrru, ao->mru);
+	}
+	if (bundle_unit>=0) {
+		unit=bundle_unit;
+		doing_multilink = 1;
+		FUNC_DEBUG("\n%s:%d: Mulitlink Master has unit %i \n",__FUNCTION__,__LINE__, unit);
+		goto ml_auto_attach;
+
+	}
+
+
 	if (!go->neg_mrru || !ho->neg_mrru) {
+            	FUNC_DEBUG("\nNot doing Multilink  %s:%d\n",__FUNCTION__,__LINE__);
 		/* not doing multilink */
 		if (go->neg_mrru)
 			notice("oops, multilink negotiated only for receive");
@@ -135,15 +158,18 @@ mp_join_bundle()
 			/* already have a bundle */
 			cfg_bundle(0, 0, 0, 0);
 			netif_set_mtu(0, mtu);
+			netif_set_qlen(0, netif_qlen);
 			return 0;
 		}
 		make_new_bundle(0, 0, 0, 0);
 		set_ifunit(1);
 		netif_set_mtu(0, mtu);
+		netif_set_qlen(0, netif_qlen);
 		return 0;
 	}
 
 	doing_multilink = 1;
+	FUNC_DEBUG("\nChanging variable doing_multilink to 1   %s:%d\n",__FUNCTION__,__LINE__);
 
 	/*
 	 * Find the appropriate bundle or join a new one.
@@ -181,17 +207,25 @@ mp_join_bundle()
 	 * For demand mode, we only need to configure the bundle
 	 * and attach the link.
 	 */
-	mtu = MIN(ho->mrru, ao->mru);
+	if (USE_MRU && ho->mru && ho->neg_mru) {
+		mtu = MIN(ho->mru, ao->mru);
+	} else {
+		mtu = MIN(ho->mrru, ao->mru);
+	}
 	if (demand) {
-		cfg_bundle(go->mrru, ho->mrru, go->neg_ssnhf, ho->neg_ssnhf);
+		//cfg_bundle(go->mrru, ho->mrru, go->neg_ssnhf, ho->neg_ssnhf);
+		cfg_bundle(mtu, mtu, go->neg_ssnhf, ho->neg_ssnhf);
 		netif_set_mtu(0, mtu);
+		netif_set_qlen(0, netif_qlen);
 		script_setenv("BUNDLE", bundle_id + 7, 1);
 		return 0;
 	}
 
+
 	/*
 	 * Check if the bundle ID is already in the database.
 	 */
+	FUNC_DEBUG(" \nCheck if the bundle ID is already in the database   %s:%d\n",__FUNCTION__,__LINE__);
 	unit = -1;
 	lock_db();
 	key.dptr = bundle_id;
@@ -201,21 +235,27 @@ mp_join_bundle()
 		/* bundle ID exists, see if the pppd record exists */
 		rec = tdb_fetch(pppdb, pid);
 		if (rec.dptr != NULL && rec.dsize > 0) {
-			/* make sure the string is null-terminated */
+			/* make sure the st, so next time
+			   we dont have to use thring is null-terminated */
+                        FUNC_DEBUG(" %s:%d: Checking existing bundle ID %s \n",__FUNCTION__,__LINE__,bundle_id);
 			rec.dptr[rec.dsize-1] = 0;
 			/* parse the interface number */
 			parse_num(rec.dptr, "IFNAME=ppp", &unit);
 			/* check the pid value */
 			if (!parse_num(rec.dptr, "PPPD_PID=", &pppd_pid)
 			    || !process_exists(pppd_pid)
-			    || !owns_unit(pid, unit))
+			    || !owns_unit(pid, unit)) {
+                                FUNC_DEBUG("Variable unit is equal to -1  %s:%d\n",__FUNCTION__,__LINE__);
 				unit = -1;
+			}
 			free(rec.dptr);
 		}
 		free(pid.dptr);
 	}
 
+ml_auto_attach:
 	if (unit >= 0) {
+		FUNC_DEBUG("\n%s:%s:%d attach to existing unit %i \n",__FILE__,__FUNCTION__,__LINE__,unit);
 		/* attach to existing unit */
 		if (bundle_attach(unit)) {
 			set_ifunit(0);
@@ -223,34 +263,54 @@ mp_join_bundle()
 			make_bundle_links(1);
 			unlock_db();
 			info("Link attached to %s", ifname);
+
+			/* Initialize bundle_unit, so next time
+			   we dont have to use the envronmental variable */
+			bundle_unit=unit;
+			multilink_in_bundle=1;
 			return 1;
-		}
+		} 
+
+		FUNC_DEBUG("\n Error Failed to attach: (%s)\n",strerror(errno));
 		/* attach failed because bundle doesn't exist */
 	}
 
 	/* we have to make a new bundle */
-	make_new_bundle(go->mrru, ho->mrru, go->neg_ssnhf, ho->neg_ssnhf);
+	FUNC_DEBUG("\nwe have to make a new bundle %s:%d\n",__FUNCTION__,__LINE__);
+
+	/* Initialize bundle_unit, so next time
+	   master can just re-attach to it */
+	if (USE_MRU) {
+	bundle_unit = make_new_bundle(mtu, mtu, go->neg_ssnhf, ho->neg_ssnhf);
+	} else {
+	bundle_unit = make_new_bundle(ho->mrru, ho->mrru, go->neg_ssnhf, ho->neg_ssnhf);
+	}
 	set_ifunit(1);
 	netif_set_mtu(0, mtu);
+	netif_set_qlen(0, netif_qlen);
 	script_setenv("BUNDLE", bundle_id + 7, 1);
 	make_bundle_links(0);
 	unlock_db();
 	info("New bundle %s created", ifname);
 	multilink_master = 1;
+	multilink_in_bundle=1;
 	return 0;
 }
 
 void mp_exit_bundle()
 {
+	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 	lock_db();
 	remove_bundle_link();
+
+	multilink_in_bundle=0;
 	unlock_db();
 }
 
 static void sendhup(char *str)
 {
 	int pid;
-
+        FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 	if (parse_num(str, "PPPD_PID=", &pid) && pid != getpid()) {
 		if (debug)
 			dbglog("sending SIGHUP to process %d", pid);
@@ -261,10 +321,10 @@ static void sendhup(char *str)
 void mp_bundle_terminated()
 {
 	TDB_DATA key;
-
+        FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 	bundle_terminating = 1;
 	upper_layers_down(0);
-	notice("Connection terminated.");
+	notice("Connection terminated: bundle terminated.");
 	print_link_stats();
 	if (!demand) {
 		remove_pidfiles();
@@ -279,7 +339,7 @@ void mp_bundle_terminated()
 	tdb_delete(pppdb, key);
 	unlock_db();
 	
-new_phase(PHASE_DEAD);
+	new_phase(PHASE_DEAD);
 }
 
 static void make_bundle_links(int append)
@@ -289,6 +349,7 @@ static void make_bundle_links(int append)
 	char entry[32];
 	int l;
 
+	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 	key.dptr = blinks_id;
 	key.dsize = strlen(blinks_id);
 	slprintf(entry, sizeof(entry), "%s;", db_key);
@@ -329,6 +390,8 @@ static void remove_bundle_link()
 	char *p, *q;
 	int l;
 
+	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+
 	key.dptr = blinks_id;
 	key.dsize = strlen(blinks_id);
 	slprintf(entry, sizeof(entry), "%s;", db_key);
@@ -356,6 +419,8 @@ static void iterate_bundle_links(void (*func)(char *))
 {
 	TDB_DATA key, rec, pp;
 	char *p, *q;
+
+	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
 	key.dptr = blinks_id;
 	key.dsize = strlen(blinks_id);
@@ -393,6 +458,7 @@ parse_num(str, key, valp)
 	char *p, *endp;
 	int i;
 
+	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 	p = strstr(str, key);
 	if (p != 0) {
 		p += strlen(key);
@@ -417,6 +483,8 @@ owns_unit(key, unit)
 	TDB_DATA kd, vd;
 	int ret = 0;
 
+	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+	
 	slprintf(ifkey, sizeof(ifkey), "IFNAME=ppp%d", unit);
 	kd.dptr = ifkey;
 	kd.dsize = strlen(ifkey);
@@ -436,6 +504,8 @@ get_default_epdisc(ep)
 	char *p;
 	struct hostent *hp;
 	u_int32_t addr;
+
+	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
 	/* First try for an ethernet MAC address */
 	p = get_first_ethernet();
@@ -478,6 +548,8 @@ epdisc_to_str(ep)
 	u_char *p = ep->value;
 	int i, mask = 0;
 	char *q, c, c2;
+
+	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
 	if (ep->class == EPD_NULL && ep->length == 0)
 		return "null";
@@ -528,6 +600,8 @@ str_to_epdisc(ep, str)
 {
 	int i, l;
 	char *p, *endp;
+
+	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
 	for (i = EPD_NULL; i <= EPD_PHONENUM; ++i) {
 		int sl = strlen(endp_class_names[i]);

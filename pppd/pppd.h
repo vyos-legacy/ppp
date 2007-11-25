@@ -212,6 +212,8 @@ struct notifier {
 
 extern int	hungup;		/* Physical layer has disconnected */
 extern int	ifunit;		/* Interface unit number */
+extern int	bundle_unit;	/* Master unit number */
+extern int	multilink_in_bundle;	/* Multilink in bundle */
 extern char	ifname[];	/* Interface name */
 extern char	hostname[];	/* Our hostname */
 extern u_char	outpacket_buf[]; /* Buffer for outgoing packets */
@@ -594,7 +596,7 @@ int  tty_establish_ppp __P((int));  /* Turn serial port into a ppp interface */
 void tty_disestablish_ppp __P((int)); /* Restore port to normal operation */
 void generic_disestablish_ppp __P((int dev_fd)); /* Restore device setting */
 int  generic_establish_ppp __P((int dev_fd)); /* Make a ppp interface */
-void make_new_bundle __P((int, int, int, int)); /* Create new bundle */
+int make_new_bundle __P((int, int, int, int)); /* Create new bundle */
 int  bundle_attach __P((int));	/* Attach link to existing bundle */
 void cfg_bundle __P((int, int, int, int)); /* Configure existing bundle */
 void destroy_bundle __P((void)); /* Tell driver to destroy bundle */
@@ -626,6 +628,7 @@ int  get_ppp_stats __P((int, struct pppd_stats *));
 				/* Return link statistics */
 void netif_set_mtu __P((int, int)); /* Set PPP interface MTU */
 int  netif_get_mtu __P((int));      /* Get PPP interface MTU */
+void netif_set_qlen __P((int, int)); /* Set PPP interface QLEN */
 int  sifvjcomp __P((int, int, int, int));
 				/* Configure VJ TCP header compression */
 int  sifup __P((int));		/* Configure i/f up for one protocol */
@@ -811,6 +814,7 @@ extern void (*snoop_send_hook) __P((unsigned char *p, int len));
  * Debug macros.  Slightly useful for finding bugs in pppd, not particularly
  * useful for finding out why your connection isn't being established.
  */
+#define DEBUGALL
 #ifdef DEBUGALL
 #define DEBUGMAIN	1
 #define DEBUGFSM	1
@@ -820,6 +824,8 @@ extern void (*snoop_send_hook) __P((unsigned char *p, int len));
 #define DEBUGUPAP	1
 #define DEBUGCHAP	1
 #endif
+
+#define PPP_DFLT_QLEN 100
 
 #ifndef LOG_PPP			/* we use LOG_LOCAL2 for syslog by default */
 #if defined(DEBUGMAIN) || defined(DEBUGFSM) || defined(DEBUGSYS) \
@@ -883,6 +889,12 @@ extern void (*snoop_send_hook) __P((unsigned char *p, int len));
 #define IPXCPDEBUG(x)	if (debug) dbglog x
 #else
 #define IPXCPDEBUG(x)
+#endif
+
+#if 0
+# define FUNC_DEBUG(format,msg...)    printf(format,##msg)
+#else
+# define FUNC_DEBUG(format,msg...)
 #endif
 
 #ifndef SIGTYPE

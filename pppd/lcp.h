@@ -120,6 +120,7 @@ extern lcp_options lcp_hisoptions[];
 
 #define DEFMRU	1500		/* Try for this */
 #define MINMRU	128		/* No MRUs below this */
+#define MINMRRU	128		/* No MRUs below this */
 #define MAXMRU	16384		/* Normally limit MRU to this */
 
 void lcp_open __P((int));

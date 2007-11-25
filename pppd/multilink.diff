@@ -1,0 +1,510 @@
+diff ./auth.c /root/ppp-2.4.4/pppd/auth.c
+501,502d500
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 
+550,551d547
+<     
+< 
+553d548
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+615,616d609
+<     
+<     FUNC_DEBUG("%s:%s: %d\n", __FILE__,__FUNCTION__,__LINE__);
+651,652c644
+< 
+<         if (doing_multilink)
+---
+> 	if (doing_multilink)
+673,678c665,667
+< 	if (!bundle_terminating) {
+< 
+< 	    new_phase(PHASE_DEAD);
+< 
+< 	    FUNC_DEBUG("%s:%s: %d New Phase MASTER\n", __FILE__,__FUNCTION__,__LINE__);
+< 	} else {
+---
+> 	if (!bundle_terminating)
+> 	    new_phase(PHASE_MASTER);
+> 	else
+680d668
+< 	}
+683,684d670
+< 
+<     FUNC_DEBUG("%s:%s: %d exit\n", __FILE__,__FUNCTION__,__LINE__);
+694,695c680
+<      FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+<      if (auth_state != s_down) {
+---
+>     if (auth_state != s_down) {
+715d699
+<     
+719,720d702
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 
+741d722
+<    
+749d729
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+823d802
+<     
+826d804
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+869d846
+<     
+874d850
+<     FUNC_DEBUG("%s: %s: %d\n", __FILE__, __FUNCTION__,__LINE__);
+879d854
+< 	FUNC_DEBUG("\nGo to Multilink IF   %s:%d\n",__FUNCTION__,__LINE__);
+881d855
+< 	    FUNC_DEBUG("Go to Join Bundle IF   %s:%d\n",__FUNCTION__,__LINE__);
+893,894d866
+< 
+<     FUNC_DEBUG("\nDidn't call detach function   %s:%d \n",__FUNCTION__,__LINE__);
+904d875
+<     FUNC_DEBUG("\nBring up other protocols   %s:%d\n",__FUNCTION__,__LINE__);
+915d885
+<     
+919d888
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+923,967c892,898
+<     FUNC_DEBUG("\nnum_np_open is %d!",num_np_open);
+< 
+<     if (protocols[0] != NULL)
+< 	    FUNC_DEBUG("\n None-Empty Protocol!\n");
+<   
+<     if (!(protocols[0] != NULL))
+< 	    FUNC_DEBUG("\n Empty Protocol!\n");
+< 
+<     for (i = 0; (protp = protocols[i]) != NULL; ++i){
+<             FUNC_DEBUG("\n ------ \nNumber i = %d",i);
+< 	    FUNC_DEBUG("\nprotp->protocol: 0x%x\n",protp->protocol); 
+< 
+< 	    if (protp->open != NULL)
+< 	    	FUNC_DEBUG("Loop Open is Not NULL! %s:%d\n",__FUNCTION__,__LINE__);
+< 	    else 
+< 	    	FUNC_DEBUG("Loop Open is NULL! %s:%d\n",__FUNCTION__,__LINE__);
+< 
+< 
+<             if (protp->enabled_flag == 0)
+< 		FUNC_DEBUG("Loop Flag is Zero!  %s:%d\n",__FUNCTION__,__LINE__);
+<             else 
+< 	        FUNC_DEBUG("Loop Flag is Not Zero  %s:%d\n",__FUNCTION__,__LINE__); 
+< 
+<     	    if (protp->protocol < 0xC000 && protp->protocol != PPP_CCP && protp->protocol != PPP_ECP
+< 	    && protp->enabled_flag && protp->open != NULL) {	   
+< 		   
+<             	    (*protp->open)(0);
+<             
+< 		    FUNC_DEBUG("\nprotp->protocol: 0x%x\n",protp->protocol); 
+< 	    	    if (protp->open != NULL)
+< 	    		FUNC_DEBUG("Open is Not NULL! %s:%d\n",__FUNCTION__,__LINE__);
+< 	    	    else 
+< 			FUNC_DEBUG("Open is NULL! %s:%d\n",__FUNCTION__,__LINE__);    
+< 
+< 
+< 	            if (protp->enabled_flag == 0)
+< 			FUNC_DEBUG("Flag is Zero! %s:%d\n",__FUNCTION__,__LINE__);
+<             	    else 
+< 	        	FUNC_DEBUG("Flag is Not Zero! %s:%d\n",__FUNCTION__,__LINE__); 	    
+< 
+< 	    	    ++num_np_open;
+< 
+< 		    FUNC_DEBUG("\nnum_np_open within loop is %d!\n",num_np_open);
+<        	}
+<     }
+---
+>     for (i = 0; (protp = protocols[i]) != NULL; ++i)
+> 	if (protp->protocol < 0xC000
+> 	    && protp->protocol != PPP_CCP && protp->protocol != PPP_ECP
+> 	    && protp->enabled_flag && protp->open != NULL) {
+> 	    (*protp->open)(0);
+> 	    ++num_np_open;
+> 	}
+969,970c900
+<     FUNC_DEBUG("\nnum_np_open again is %d!",num_np_open); 
+<     if (num_np_open == 0) {
+---
+>     if (num_np_open == 0)
+972,974c902
+< 	
+< 	lcp_close(0, "Yuan No network protocols running");
+<     }
+---
+> 	lcp_close(0, "No network protocols running");
+1134d1061
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+1179d1105
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+1197d1122
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+1209d1133
+<     
+1213,1214d1136
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 
+1253d1174
+<    
+1257d1177
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+1285d1204
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+diff ./lcp.c /root/ppp-2.4.4/pppd/lcp.c
+303d302
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+315d313
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+341d338
+<  
+346,347d342
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 
+384d378
+<     
+388,389d381
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 
+407d398
+<    
+409d399
+<     FUNC_DEBUG("%s:%s: %d\n", __FILE__,__FUNCTION__,__LINE__);
+413d402
+< 
+415d403
+< 	FUNC_DEBUG("%s:%s: %d STATE STPPED CALLING FINISHED\n", __FILE__,__FUNCTION__,__LINE__);
+427,428d414
+< 
+<      FUNC_DEBUG("%s:%s: %d EXIT\n", __FILE__,__FUNCTION__,__LINE__);
+441d426
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+470d454
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+487d470
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+506d488
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+526d507
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+573,574d553
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 
+626d604
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+648d625
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+665,666d641
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 
+697,698d671
+< 
+< FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+732,733d704
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 
+829,830d799
+< 
+< FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+990d958
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+1086c1054
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);if (go->neg_mru && go->mru != DEFMRU) {
+---
+>     if (go->neg_mru && go->mru != DEFMRU) {
+1379,1380d1346
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 
+1552,1553d1517
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 
+1587c1551
+< FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);	    /*
+---
+> 	    /*
+1782c1746
+< 		break;FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+---
+> 		break;
+1929,1930d1892
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 
+1978,1979d1939
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 
+1999,2000c1959
+<         FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 	link_required(f->unit);
+---
+>     link_required(f->unit);
+2011,2013c1970
+<         FUNC_DEBUG("%s:%s: %d\n", __FILE__,__FUNCTION__,__LINE__);
+< 	link_terminated(f->unit);
+< 	FUNC_DEBUG("%s:%s: %d exit\n", __FILE__,__FUNCTION__,__LINE__);
+---
+>     link_terminated(f->unit);
+2039,2040d1995
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 
+2278d2232
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+2295d2248
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+2317d2269
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+2337d2288
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+2365d2315
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+2398d2347
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+2419d2367
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+diff ./main.c /root/ppp-2.4.4/pppd/main.c
+129,130d128
+< int bundle_unit=-1;		/* Unit for Master device */
+< int multilink_in_bundle=0;	/* Are we in multilink bundle */
+561c559
+<         if (!persist || asked_to_quit)
+---
+> 	if (!persist || asked_to_quit || (maxfail > 0 && unsuccess >= maxfail))
+Only in .: Makefile
+diff ./multilink.c /root/ppp-2.4.4/pppd/multilink.c
+81c81
+<         FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+---
+> 
+115,119c115
+<         FUNC_DEBUG("%s: %d Doing Multilink=%i BundleUnit=%i\n", __FUNCTION__,__LINE__,doing_multilink, bundle_unit);
+< 	
+< 	
+<        	  if (multilink_in_bundle) {
+< 		FUNC_DEBUG("\nMulitlink Running already attached!  %s:%d\n",__FUNCTION__,__LINE__);
+---
+> 	if (doing_multilink) {
+122d117
+< 			FUNC_DEBUG("\nHave previously joined a bundle!");
+129,138c124
+< 		 return 1;
+< 	}
+< 
+< 	mtu = MIN(ho->mrru, ao->mru);
+< 	if (bundle_unit>=0) {
+< 		unit=bundle_unit;
+< 		doing_multilink = 1;
+< 		FUNC_DEBUG("\n%s:%d: Mulitlink Master has unit %i \n",__FUNCTION__,__LINE__, unit);
+< 		goto ml_auto_attach;
+< 
+---
+> 		return 0;
+142d127
+<             	FUNC_DEBUG("\nNot doing Multilink  %s:%d\n",__FUNCTION__,__LINE__);
+162d146
+< 	FUNC_DEBUG("\nChanging variable doing_multilink to 1   %s:%d\n",__FUNCTION__,__LINE__);
+211d194
+< 	FUNC_DEBUG(" \nCheck if the bundle ID is already in the database   %s:%d\n",__FUNCTION__,__LINE__);
+221,223c204
+< 			/* make sure the st, so next time
+< 			   we dont have to use thring is null-terminated */
+<                         FUNC_DEBUG(" %s:%d: Checking existing bundle ID %s \n",__FUNCTION__,__LINE__,bundle_id);
+---
+> 			/* make sure the string is null-terminated */
+230,231c211
+< 			    || !owns_unit(pid, unit)) {
+<                                 FUNC_DEBUG("Variable unit is equal to -1  %s:%d\n",__FUNCTION__,__LINE__);
+---
+> 			    || !owns_unit(pid, unit))
+233d212
+< 			}
+239d217
+< ml_auto_attach:
+241d218
+< 		FUNC_DEBUG("\n%s:%s:%d attach to existing unit %i \n",__FILE__,__FUNCTION__,__LINE__,unit);
+249,253d225
+< 
+< 			/* Initialize bundle_unit, so next time
+< 			   we dont have to use the envronmental variable */
+< 			bundle_unit=unit;
+< 			multilink_in_bundle=1;
+255,257c227
+< 		} 
+< 
+< 		FUNC_DEBUG("\n Error Failed to attach: (%s)\n",strerror(errno));
+---
+> 		}
+262,266c232
+< 	FUNC_DEBUG("\nwe have to make a new bundle %s:%d\n",__FUNCTION__,__LINE__);
+< 
+< 	/* Initialize bundle_unit, so next time
+< 	   master can just re-attach to it */
+< 	bundle_unit = make_new_bundle(go->mrru, ho->mrru, go->neg_ssnhf, ho->neg_ssnhf);
+---
+> 	make_new_bundle(go->mrru, ho->mrru, go->neg_ssnhf, ho->neg_ssnhf);
+274d239
+< 	multilink_in_bundle=1;
+280d244
+< 	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+283,284d246
+< 
+< 	multilink_in_bundle=0;
+291c253
+<         FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+---
+> 
+302c264
+<         FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+---
+> 
+330d291
+< 	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+371,372d331
+< 	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 
+401,402d359
+< 	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 
+439d395
+< 	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+464,465d419
+< 	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 	
+486,487d439
+< 	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 
+530,531d481
+< 	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 
+582,583d531
+< 	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 
+Only in .: multilink.diff
+Common subdirectories: ./plugins and /root/ppp-2.4.4/pppd/plugins
+diff ./pppd.h /root/ppp-2.4.4/pppd/pppd.h
+215,216d214
+< extern int	bundle_unit;	/* Master unit number */
+< extern int	multilink_in_bundle;	/* Multilink in bundle */
+599c597
+< int make_new_bundle __P((int, int, int, int)); /* Create new bundle */
+---
+> void make_new_bundle __P((int, int, int, int)); /* Create new bundle */
+890,895d887
+< #if 0
+< # define FUNC_DEBUG(format,msg...)    printf(format,##msg)
+< #else
+< # define FUNC_DEBUG(format,msg...)
+< #endif
+< 
+diff ./sys-linux.c /root/ppp-2.4.4/pppd/sys-linux.c
+452c452
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+---
+> 
+548,549c548
+<         FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 	if (!hungup) {
+---
+>     if (!hungup) {
+591,593c590
+<     
+<      FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);	
+<      if (new_style_driver) {
+---
+>     if (new_style_driver) {
+621,622d617
+< 	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 
+653,654d647
+< 
+< 	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+679c672
+< int make_new_bundle(int mrru, int mtru, int rssn, int tssn)
+---
+> void make_new_bundle(int mrru, int mtru, int rssn, int tssn)
+681,683d673
+< 	int unit=-1;
+< 
+< 	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+685c675
+< 		return unit;
+---
+> 		return;
+688,689c678
+< 	unit = make_ppp_unit();
+< 	if (unit < 0) {
+---
+> 	if (make_ppp_unit() < 0)
+691d679
+< 	}
+695,696d682
+< 
+< 	return unit;
+705d690
+<         
+708d692
+< 	FUNC_DEBUG("%s: %s: %d  Unit = %i \n", __FILE__,__FUNCTION__,__LINE__, ifnum);
+715d698
+< 
+737d719
+< 	FUNC_DEBUG("%s: %s: %d\n", __FILE__,__FUNCTION__,__LINE__);
+922,923d903
+< 	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 
+1008,1025c988,1003
+< 	FUNC_DEBUG("%s:%s: %d\n", __FILE__,__FUNCTION__,__LINE__);
+<        	if (restore_term) {
+< 		restore_term = 0;
+< 	/*
+< 	* Turn off echoing, because otherwise we can get into
+< 	* a loop with the tty and the modem echoing to each other.
+< 	* We presume we are the sole user of this tty device, so
+< 	* when we close it, it will revert to its defaults anyway.
+< 	*/
+< 		if (!default_device)
+< 			inittermios.c_lflag &= ~(ECHO | ECHONL);
+< 	
+< 		if (tcsetattr(tty_fd, TCSAFLUSH, &inittermios) < 0) {
+< 		if (! ok_error (errno))
+< 			warn("tcsetattr: %m (line %d)", __LINE__);
+< 		}
+<     	}
+< 	FUNC_DEBUG("%s:%s: %d exit\n", __FILE__,__FUNCTION__,__LINE__);
+---
+>     if (restore_term) {
+> 	restore_term = 0;
+> /*
+>  * Turn off echoing, because otherwise we can get into
+>  * a loop with the tty and the modem echoing to each other.
+>  * We presume we are the sole user of this tty device, so
+>  * when we close it, it will revert to its defaults anyway.
+>  */
+> 	if (!default_device)
+> 	    inittermios.c_lflag &= ~(ECHO | ECHONL);
+> 
+> 	if (tcsetattr(tty_fd, TCSAFLUSH, &inittermios) < 0) {
+> 	    if (! ok_error (errno))
+> 		warn("tcsetattr: %m (line %d)", __LINE__);
+> 	}
+>     }
+1365d1342
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+1985d1961
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+2039,2040d2014
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 
+2267,2268d2240
+< 
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+2296,2297d2267
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+< 
+2429d2398
+<     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+diff ./tty.c /root/ppp-2.4.4/pppd/tty.c
+796d795
+< 	FUNC_DEBUG("%s:%s: %d\n", __FILE__,__FUNCTION__,__LINE__);
+804d802
+< 	FUNC_DEBUG("%s:%s: %d exit\n", __FILE__,__FUNCTION__,__LINE__);
+827,828d824
+< 	FUNC_DEBUG("%s:%s: %d\n", __FILE__,__FUNCTION__,__LINE__);
+< 
+850,851d845
+< 
+< 	FUNC_DEBUG("%s:%s: %d exit\n", __FILE__,__FUNCTION__,__LINE__);

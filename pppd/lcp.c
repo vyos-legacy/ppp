@@ -57,6 +57,7 @@
 #include "magic.h"
 
 static const char rcsid[] = RCSID;
+extern int netif_qlen;
 
 /*
  * When the link comes up we want to be able to wait for a short while,
@@ -300,6 +301,7 @@ static int
 noopt(argv)
     char **argv;
 {
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     BZERO((char *) &lcp_wantoptions[0], sizeof (struct lcp_options));
     BZERO((char *) &lcp_allowoptions[0], sizeof (struct lcp_options));
 
@@ -311,6 +313,7 @@ static int
 setendpoint(argv)
     char **argv;
 {
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     if (str_to_epdisc(&lcp_wantoptions[0].endpoint, *argv)) {
 	lcp_wantoptions[0].neg_endpoint = 1;
 	return 1;
@@ -336,9 +339,12 @@ static void
 lcp_init(unit)
     int unit;
 {
+ 
     fsm *f = &lcp_fsm[unit];
     lcp_options *wo = &lcp_wantoptions[unit];
     lcp_options *ao = &lcp_allowoptions[unit];
+
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
     f->unit = unit;
     f->protocol = PPP_LCP;
@@ -376,8 +382,11 @@ void
 lcp_open(unit)
     int unit;
 {
+    
     fsm *f = &lcp_fsm[unit];
     lcp_options *wo = &lcp_wantoptions[unit];
+
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
     f->flags &= ~(OPT_PASSIVE | OPT_SILENT);
     if (wo->passive)
@@ -396,11 +405,15 @@ lcp_close(unit, reason)
     int unit;
     char *reason;
 {
+   
     fsm *f = &lcp_fsm[unit];
+    FUNC_DEBUG("%s:%s: %d\n", __FILE__,__FUNCTION__,__LINE__);
 
     if (phase != PHASE_DEAD && phase != PHASE_MASTER)
 	new_phase(PHASE_TERMINATE);
+
     if (f->state == STOPPED && f->flags & (OPT_PASSIVE|OPT_SILENT)) {
+	FUNC_DEBUG("%s:%s: %d STATE STPPED CALLING FINISHED\n", __FILE__,__FUNCTION__,__LINE__);
 	/*
 	 * This action is not strictly according to the FSM in RFC1548,
 	 * but it does mean that the program terminates if you do a
@@ -412,6 +425,8 @@ lcp_close(unit, reason)
 
     } else
 	fsm_close(f, reason);
+
+     FUNC_DEBUG("%s:%s: %d EXIT\n", __FILE__,__FUNCTION__,__LINE__);
 }
 
 
@@ -424,6 +439,7 @@ lcp_lowerup(unit)
 {
     lcp_options *wo = &lcp_wantoptions[unit];
     fsm *f = &lcp_fsm[unit];
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
     /*
      * Don't use A/C or protocol compression on transmission,
@@ -452,6 +468,7 @@ lcp_lowerdown(unit)
     int unit;
 {
     fsm *f = &lcp_fsm[unit];
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
     if (f->flags & DELAYED_UP)
 	f->flags &= ~DELAYED_UP;
@@ -468,6 +485,7 @@ lcp_delayed_up(arg)
     void *arg;
 {
     fsm *f = arg;
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
     if (f->flags & DELAYED_UP) {
 	f->flags &= ~DELAYED_UP;
@@ -486,6 +504,7 @@ lcp_input(unit, p, len)
     int len;
 {
     fsm *f = &lcp_fsm[unit];
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
     if (f->flags & DELAYED_UP) {
 	f->flags &= ~DELAYED_UP;
@@ -505,6 +524,7 @@ lcp_extcode(f, code, id, inp, len)
     int len;
 {
     u_char *magp;
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
     switch( code ){
     case PROTREJ:
@@ -550,6 +570,8 @@ lcp_rprotrej(f, inp, len)
     struct protent *protp;
     u_short prot;
     const char *pname;
+
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
     if (len < 2) {
 	LCPDEBUG(("lcp_rprotrej: Rcvd short Protocol-Reject packet!"));
@@ -602,6 +624,7 @@ lcp_protrej(unit)
     /*
      * Can't reject LCP!
      */
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     error("Received Protocol-Reject for LCP!");
     fsm_protreject(&lcp_fsm[unit]);
 }
@@ -623,6 +646,7 @@ lcp_sprotrej(unit, p, len)
     p += 2;
     len -= 2;
 
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     fsm_sdata(&lcp_fsm[unit], PROTREJ, ++lcp_fsm[unit].id,
 	      p, len);
 }
@@ -638,6 +662,8 @@ lcp_resetci(f)
     lcp_options *wo = &lcp_wantoptions[f->unit];
     lcp_options *go = &lcp_gotoptions[f->unit];
     lcp_options *ao = &lcp_allowoptions[f->unit];
+
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
     wo->magicnumber = magic();
     wo->numloops = 0;
@@ -669,6 +695,8 @@ lcp_cilen(f)
 #define LENCILONG(neg)	((neg) ? CILEN_LONG : 0)
 #define LENCILQR(neg)	((neg) ? CILEN_LQR: 0)
 #define LENCICBCP(neg)	((neg) ? CILEN_CBCP: 0)
+
+FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     /*
      * NB: we only ask for one of CHAP, UPAP, or EAP, even if we will
      * accept more than one.  We prefer EAP first, then CHAP, then
@@ -701,6 +729,8 @@ lcp_addci(f, ucp, lenp)
 {
     lcp_options *go = &lcp_gotoptions[f->unit];
     u_char *start_ucp = ucp;
+
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
 #define ADDCIVOID(opt, neg) \
     if (neg) { \
@@ -797,6 +827,8 @@ lcp_ackci(f, p, len)
      * Check packet length and CI length at each step.
      * If we find any deviations, then this packet is bad.
      */
+
+FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 #define ACKCIVOID(opt, neg) \
     if (neg) { \
 	if ((len -= CILEN_VOID) < 0) \
@@ -956,6 +988,7 @@ lcp_nakci(f, p, len, treat_as_reject)
     BZERO(&no, sizeof(no));
     try = *go;
 
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     /*
      * Any Nak'd CIs must be in exactly the same order that we sent.
      * Check packet length and CI length at each step.
@@ -1051,6 +1084,7 @@ lcp_nakci(f, p, len, treat_as_reject)
      * If they send us a bigger MRU than what we asked, accept it, up to
      * the limit of the default MRU we'd get if we didn't negotiate.
      */
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     if (go->neg_mru && go->mru != DEFMRU) {
 	NAKCISHORT(CI_MRU, neg_mru,
 		   if (cishort <= wo->mru || cishort <= DEFMRU)
@@ -1344,6 +1378,8 @@ lcp_rejci(f, p, len)
 
     try = *go;
 
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+
     /*
      * Any Rejected CIs must be in exactly the same order that we sent.
      * Check packet length and CI length at each step.
@@ -1515,6 +1551,8 @@ lcp_reqci(f, inp, lenp, reject_if_disagree)
      */
     BZERO(ho, sizeof(*ho));
 
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+
     /*
      * Process all his options.
      */
@@ -1548,7 +1586,7 @@ lcp_reqci(f, inp, lenp, reject_if_disagree)
 	    }
 	    GETSHORT(cishort, p);	/* Parse MRU */
 
-	    /*
+FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);	    /*
 	     * He must be able to receive at least our minimum.
 	     * No need to check a maximum.  If he sends a large number,
 	     * we'll just ignore it.
@@ -1557,7 +1595,7 @@ lcp_reqci(f, inp, lenp, reject_if_disagree)
 		orc = CONFNAK;		/* Nak CI */
 		PUTCHAR(CI_MRU, nakp);
 		PUTCHAR(CILEN_SHORT, nakp);
-		PUTSHORT(MINMRU, nakp);	/* Give him a hint */
+		PUTSHORT(cishort, nakp);	/* Give him a hint */
 		break;
 	    }
 	    ho->neg_mru = 1;		/* Remember he sent MRU */
@@ -1790,6 +1828,14 @@ lcp_reqci(f, inp, lenp, reject_if_disagree)
 	    }
 
 	    GETSHORT(cishort, p);
+            if (cishort < MINMRRU) {
+                orc = CONFNAK;          /* Nak CI */
+                PUTCHAR(CI_MRRU, nakp);
+                PUTCHAR(CILEN_SHORT, nakp);
+                PUTSHORT(cishort, nakp); /* Give him a hint */
+                break;
+            }
+
 	    /* possibly should insist on a minimum/maximum MRRU here */
 	    ho->neg_mrru = 1;
 	    ho->mrru = cishort;
@@ -1890,6 +1936,8 @@ lcp_up(f)
     lcp_options *ao = &lcp_allowoptions[f->unit];
     int mtu, mru;
 
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+
     if (!go->neg_magicnumber)
 	go->magicnumber = 0;
     if (!ho->neg_magicnumber)
@@ -1910,6 +1958,7 @@ lcp_up(f)
     if (!(multilink && go->neg_mrru && ho->neg_mrru))
 #endif /* HAVE_MULTILINK */
 	netif_set_mtu(f->unit, MIN(MIN(mtu, mru), ao->mru));
+	netif_set_qlen(f->unit, netif_qlen);
     ppp_send_config(f->unit, mtu,
 		    (ho->neg_asyncmap? ho->asyncmap: 0xffffffff),
 		    ho->neg_pcompression, ho->neg_accompression);
@@ -1937,6 +1986,8 @@ lcp_down(f)
 {
     lcp_options *go = &lcp_gotoptions[f->unit];
 
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+
     lcp_echo_lowerdown(f->unit);
 
     link_down(f->unit);
@@ -1956,7 +2007,8 @@ static void
 lcp_starting(f)
     fsm *f;
 {
-    link_required(f->unit);
+        FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+	link_required(f->unit);
 }
 
 
@@ -1967,7 +2019,9 @@ static void
 lcp_finished(f)
     fsm *f;
 {
-    link_terminated(f->unit);
+        FUNC_DEBUG("%s:%s: %d\n", __FILE__,__FUNCTION__,__LINE__);
+	link_terminated(f->unit);
+	FUNC_DEBUG("%s:%s: %d exit\n", __FILE__,__FUNCTION__,__LINE__);
 }
 
 
@@ -1992,6 +2046,8 @@ lcp_printpkt(p, plen, printer, arg)
     u_char *pstart, *optend;
     u_short cishort;
     u_int32_t cilong;
+
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
     if (plen < HEADERLEN)
 	return 0;
@@ -2230,6 +2286,7 @@ static
 void LcpLinkFailure (f)
     fsm *f;
 {
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     if (f->state == OPENED) {
 	info("No response to %d echo-requests", lcp_echos_pending);
         notice("Serial link appears to be disconnected.");
@@ -2246,6 +2303,7 @@ static void
 LcpEchoCheck (f)
     fsm *f;
 {
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     LcpSendEchoRequest (f);
     if (f->state != OPENED)
 	return;
@@ -2267,6 +2325,7 @@ static void
 LcpEchoTimeout (arg)
     void *arg;
 {
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     if (lcp_echo_timer_running != 0) {
         lcp_echo_timer_running = 0;
         LcpEchoCheck ((fsm *) arg);
@@ -2286,6 +2345,7 @@ lcp_received_echo_reply (f, id, inp, len)
 {
     u_int32_t magic;
 
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     /* Check the magic number - don't count replies from ourselves. */
     if (len < 4) {
 	dbglog("lcp: received short Echo-Reply, length %d", len);
@@ -2313,6 +2373,7 @@ LcpSendEchoRequest (f)
     u_int32_t lcp_magic;
     u_char pkt[4], *pktp;
 
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     /*
      * Detect the failure of the peer at this point.
      */
@@ -2345,6 +2406,7 @@ lcp_echo_lowerup (unit)
 {
     fsm *f = &lcp_fsm[unit];
 
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     /* Clear the parameters for generating echo frames */
     lcp_echos_pending      = 0;
     lcp_echo_number        = 0;
@@ -2365,6 +2427,7 @@ lcp_echo_lowerdown (unit)
 {
     fsm *f = &lcp_fsm[unit];
 
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     if (lcp_echo_timer_running != 0) {
         UNTIMEOUT (LcpEchoTimeout, f);
         lcp_echo_timer_running = 0;

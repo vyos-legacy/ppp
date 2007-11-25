@@ -449,7 +449,7 @@ int tty_establish_ppp (int tty_fd)
 int generic_establish_ppp (int fd)
 {
     int x;
-
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     if (new_style_driver) {
 	int flags;
 
@@ -545,7 +545,8 @@ int generic_establish_ppp (int fd)
 
 void tty_disestablish_ppp(int tty_fd)
 {
-    if (!hungup) {
+        FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+	if (!hungup) {
 /*
  * Flush the tty output buffer so that the TIOCSETD doesn't hang.
  */
@@ -587,7 +588,9 @@ flushfailed:
  */
 void generic_disestablish_ppp(int dev_fd)
 {
-    if (new_style_driver) {
+    
+     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);	
+     if (new_style_driver) {
 	close(ppp_fd);
 	ppp_fd = -1;
 	if (demand) {
@@ -614,6 +617,8 @@ void generic_disestablish_ppp(int dev_fd)
 static int make_ppp_unit()
 {
 	int x, flags;
+
+	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
 	if (ppp_dev_fd >= 0) {
 		dbglog("in make_ppp_unit, already had /dev/ppp open?");
@@ -645,6 +650,8 @@ static int make_ppp_unit()
  */
 void cfg_bundle(int mrru, int mtru, int rssn, int tssn)
 {
+
+	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 	if (!new_style_driver)
 		return;
 
@@ -669,17 +676,24 @@ void cfg_bundle(int mrru, int mtru, int rssn, int tssn)
  * In demand mode this uses our existing bundle instead of making
  * a new one.
  */
-void make_new_bundle(int mrru, int mtru, int rssn, int tssn)
+int make_new_bundle(int mrru, int mtru, int rssn, int tssn)
 {
+	int unit=-1;
+
+	FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 	if (!new_style_driver)
-		return;
+		return unit;
 
 	/* make us a ppp unit */
-	if (make_ppp_unit() < 0)
+	unit = make_ppp_unit();
+	if (unit < 0) {
 		die(1);
+	}
 
 	/* set the mrru and flags */
 	cfg_bundle(mrru, mtru, rssn, tssn);
+
+	return unit;
 }
 
 /*
@@ -688,14 +702,17 @@ void make_new_bundle(int mrru, int mtru, int rssn, int tssn)
  */
 int bundle_attach(int ifnum)
 {
+        
 	int master_fd;
 
+	FUNC_DEBUG("%s: %s: %d  Unit = %i \n", __FILE__,__FUNCTION__,__LINE__, ifnum);
 	if (!new_style_driver)
 		return -1;
 
 	master_fd = open("/dev/ppp", O_RDWR);
 	if (master_fd < 0)
 		fatal("Couldn't open /dev/ppp: %m");
+
 	if (ioctl(master_fd, PPPIOCATTACH, &ifnum) < 0) {
 		if (errno == ENXIO) {
 			close(master_fd);
@@ -717,6 +734,7 @@ int bundle_attach(int ifnum)
  */
 void destroy_bundle(void)
 {
+	FUNC_DEBUG("%s: %s: %d\n", __FILE__,__FUNCTION__,__LINE__);
 	if (ppp_dev_fd >= 0) {
 		close(ppp_dev_fd);
 		remove_fd(ppp_dev_fd);
@@ -901,6 +919,16 @@ void set_up_tty(int tty_fd, int local)
     int speed;
     struct termios tios;
 
+
+    /* Nenad: If we are in sync mode 
+     * dont bother with analog stuff */
+
+    if (sync_serial) {
+	return;
+    }
+
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
+
     setdtr(tty_fd, 1);
     if (tcgetattr(tty_fd, &tios) < 0) {
 	if (!ok_error(errno))
@@ -985,22 +1013,24 @@ void setdtr (int tty_fd, int on)
 
 void restore_tty (int tty_fd)
 {
-    if (restore_term) {
-	restore_term = 0;
-/*
- * Turn off echoing, because otherwise we can get into
- * a loop with the tty and the modem echoing to each other.
- * We presume we are the sole user of this tty device, so
- * when we close it, it will revert to its defaults anyway.
- */
-	if (!default_device)
-	    inittermios.c_lflag &= ~(ECHO | ECHONL);
-
-	if (tcsetattr(tty_fd, TCSAFLUSH, &inittermios) < 0) {
-	    if (! ok_error (errno))
-		warn("tcsetattr: %m (line %d)", __LINE__);
-	}
-    }
+	FUNC_DEBUG("%s:%s: %d\n", __FILE__,__FUNCTION__,__LINE__);
+       	if (restore_term) {
+		restore_term = 0;
+	/*
+	* Turn off echoing, because otherwise we can get into
+	* a loop with the tty and the modem echoing to each other.
+	* We presume we are the sole user of this tty device, so
+	* when we close it, it will revert to its defaults anyway.
+	*/
+		if (!default_device)
+			inittermios.c_lflag &= ~(ECHO | ECHONL);
+	
+		if (tcsetattr(tty_fd, TCSAFLUSH, &inittermios) < 0) {
+		if (! ok_error (errno))
+			warn("tcsetattr: %m (line %d)", __LINE__);
+		}
+    	}
+	FUNC_DEBUG("%s:%s: %d exit\n", __FILE__,__FUNCTION__,__LINE__);
 }
 
 /********************************************************************
@@ -1156,13 +1186,39 @@ netif_set_mtu(int unit, int mtu)
 {
     struct ifreq ifr;
 
+    /* Nenad: If not running in sync mode leave mtu as default */
+    if (!sync_serial) {
+	return;
+    }
+
+
     memset (&ifr, '\0', sizeof (ifr));
     strlcpy(ifr.ifr_name, ifname, sizeof (ifr.ifr_name));
     ifr.ifr_mtu = mtu;
 
     if (ifunit >= 0 && ioctl(sock_fd, SIOCSIFMTU, (caddr_t) &ifr) < 0)
 	error("ioctl(SIOCSIFMTU): %m (line %d)", __LINE__);
+    
 }
+
+/*
+ * netif_set_qlen - set the QLEN on the PPP network interface.
+ */
+void
+netif_set_qlen(int unit, int qlen)
+{
+    struct ifreq ifr;
+
+    memset (&ifr, '\0', sizeof (ifr));
+    strlcpy(ifr.ifr_name, ifname, sizeof (ifr.ifr_name));
+    ifr.ifr_qlen = qlen;
+
+    if (ifunit >= 0 && ioctl(sock_fd, SIOCSIFTXQLEN, (caddr_t) &ifr) < 0)
+        error("ioctl(SIOCSIFMTU): %m (line %d)", __LINE__);
+
+}
+
+
 
 /*
  * netif_get_mtu - get the MTU on the PPP network interface.
@@ -1340,6 +1396,7 @@ get_ppp_stats(u, stats)
     struct ifpppstatsreq req;
 
     memset (&req, 0, sizeof (req));
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
     req.stats_ptr = (caddr_t) &req.stats;
     strlcpy(req.ifr__name, ifname, sizeof(req.ifr__name));
@@ -1959,6 +2016,7 @@ ppp_registered(void)
     int ret = 0;
     char slave[16];
 
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     /*
      * We used to open the serial device and set it to the ppp line
      * discipline here, in order to create a ppp unit.  But that is
@@ -2011,6 +2069,8 @@ int ppp_available(void)
     osmaj = osmin = ospatch = 0;
     sscanf(utsname.release, "%d.%d.%d", &osmaj, &osmin, &ospatch);
     kernel_version = KVERSION(osmaj, osmin, ospatch);
+
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
     fd = open("/dev/ppp", O_RDWR);
 #if 0
@@ -2238,6 +2298,8 @@ int sifup(int u)
 
     memset (&ifr, '\0', sizeof (ifr));
     strlcpy(ifr.ifr_name, ifname, sizeof (ifr.ifr_name));
+
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     if (ioctl(sock_fd, SIOCGIFFLAGS, (caddr_t) &ifr) < 0) {
 	if (! ok_error (errno))
 	    error("ioctl (SIOCGIFFLAGS): %m (line %d)", __LINE__);
@@ -2264,6 +2326,8 @@ int sifup(int u)
 int sifdown (int u)
 {
     struct ifreq ifr;
+
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
     if (if_is_up && --if_is_up > 0)
 	return 1;
@@ -2396,6 +2460,7 @@ int cifaddr (int unit, u_int32_t our_adr, u_int32_t his_adr)
 {
     struct ifreq ifr;
 
+    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     if (kernel_version < KVERSION(2,1,16)) {
 /*
  *  Delete the route through the device
