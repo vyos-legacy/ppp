@@ -498,8 +498,6 @@ set_noauth_addr(argv)
     struct wordlist *wp;
 
     wp = (struct wordlist *) malloc(sizeof(struct wordlist) + l);
-    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
-
     if (wp == NULL)
 	novm("allow-ip argument");
     wp->word = (char *) (wp + 1);
@@ -547,10 +545,7 @@ link_required(unit)
 void start_link(unit)
     int unit;
 {
-    
-
     char *msg;
-    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
     new_phase(PHASE_SERIALCONN);
 
@@ -612,8 +607,6 @@ void
 link_terminated(unit)
     int unit;
 {
-    
-    FUNC_DEBUG("%s:%s: %d\n", __FILE__,__FUNCTION__,__LINE__);
     if (phase == PHASE_DEAD || phase == PHASE_MASTER)
 	return;
     new_phase(PHASE_DISCONNECT);
@@ -648,8 +641,7 @@ link_terminated(unit)
 	remove_fd(fd_ppp);
 	clean_check();
 	the_channel->disestablish_ppp(devfd);
-
-        if (doing_multilink)
+	if (doing_multilink)
 	    mp_exit_bundle();
 	fd_ppp = -1;
     }
@@ -670,16 +662,12 @@ link_terminated(unit)
 	(*the_channel->cleanup)();
 
     if (doing_multilink && multilink_master) {
-	if (!bundle_terminating) {
-	    new_phase(PHASE_DEAD);
-	    FUNC_DEBUG("%s:%s: %d New Phase MASTER\n", __FILE__,__FUNCTION__,__LINE__);
-	} else {
+	if (!bundle_terminating)
+	    new_phase(PHASE_MASTER);
+	else
 	    mp_bundle_terminated();
-	}
     } else
 	new_phase(PHASE_DEAD);
-
-    FUNC_DEBUG("%s:%s: %d exit\n", __FILE__,__FUNCTION__,__LINE__);
 }
 
 /*
@@ -689,8 +677,7 @@ void
 link_down(unit)
     int unit;
 {
-     FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
-     if (auth_state != s_down) {
+    if (auth_state != s_down) {
 	notify(link_down_notifier, 0);
 	auth_state = s_down;
 	if (auth_script_state == s_up && auth_script_pid == 0) {
@@ -710,11 +697,8 @@ link_down(unit)
 
 void upper_layers_down(int unit)
 {
-    
     int i;
     struct protent *protp;
-
-    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
     for (i = 0; (protp = protocols[i]) != NULL; ++i) {
 	if (!protp->enabled_flag)
@@ -736,7 +720,6 @@ void
 link_established(unit)
     int unit;
 {
-   
     int auth;
     lcp_options *wo = &lcp_wantoptions[unit];
     lcp_options *go = &lcp_gotoptions[unit];
@@ -744,7 +727,6 @@ link_established(unit)
     int i;
     struct protent *protp;
 
-    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     /*
      * Tell higher-level protocols that LCP is up.
      */
@@ -818,10 +800,8 @@ static void
 network_phase(unit)
     int unit;
 {
-    
     lcp_options *go = &lcp_gotoptions[unit];
 
-    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     /* Log calling number. */
     if (*remote_number)
 	notice("peer from calling number %q authorized", remote_number);
@@ -864,19 +844,15 @@ void
 start_networks(unit)
     int unit;
 {
-    
     int i;
     struct protent *protp;
     int ecp_required, mppe_required;
 
-    FUNC_DEBUG("%s: %s: %d\n", __FILE__, __FUNCTION__,__LINE__);
     new_phase(PHASE_NETWORK);
 
 #ifdef HAVE_MULTILINK
     if (multilink) {
-	FUNC_DEBUG("\nGo to Multilink IF   %s:%d\n",__FUNCTION__,__LINE__);
 	if (mp_join_bundle()) {
-	    FUNC_DEBUG("Go to Join Bundle IF   %s:%d\n",__FUNCTION__,__LINE__);
 	    if (updetach && !nodetach)
 		detach();
 	    return;
@@ -888,7 +864,6 @@ start_networks(unit)
     if (!demand)
 	set_filters(&pass_filter, &active_filter);
 #endif
-
     /* Start CCP and ECP */
     for (i = 0; (protp = protocols[i]) != NULL; ++i)
 	if ((protp->protocol == PPP_ECP || protp->protocol == PPP_CCP)
@@ -898,7 +873,6 @@ start_networks(unit)
     /*
      * Bring up other network protocols iff encryption is not required.
      */
-    FUNC_DEBUG("\nBring up other protocols   %s:%d\n",__FUNCTION__,__LINE__);
     ecp_required = ecp_gotoptions[unit].required;
     mppe_required = ccp_gotoptions[unit].mppe;
     if (!ecp_required && !mppe_required)
@@ -909,60 +883,23 @@ void
 continue_networks(unit)
     int unit;
 {
-    
     int i;
     struct protent *protp;
 
-    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     /*
      * Start the "real" network protocols.
      */
-    FUNC_DEBUG("\nnum_np_open is %d!",num_np_open);
+    for (i = 0; (protp = protocols[i]) != NULL; ++i)
+	if (protp->protocol < 0xC000
+	    && protp->protocol != PPP_CCP && protp->protocol != PPP_ECP
+	    && protp->enabled_flag && protp->open != NULL) {
+	    (*protp->open)(0);
+	    ++num_np_open;
+	}
 
-    for (i = 0; (protp = protocols[i]) != NULL; ++i){
-            FUNC_DEBUG("\n ------ \nNumber i = %d",i);
-	    FUNC_DEBUG("\nprotp->protocol: 0x%x\n",protp->protocol); 
-
-	    if (protp->open != NULL)
-	       	FUNC_DEBUG("Loop Open is Not NULL! %s:%d\n",__FUNCTION__,__LINE__);
-	    else 
-	    	FUNC_DEBUG("Loop Open is NULL! %s:%d\n",__FUNCTION__,__LINE__);
-
-
-            if (protp->enabled_flag == 0)
-		FUNC_DEBUG("Loop Flag is Zero!  %s:%d\n",__FUNCTION__,__LINE__);
-            else 
-	        FUNC_DEBUG("Loop Flag is Not Zero  %s:%d\n",__FUNCTION__,__LINE__); 
-
-    	    if (protp->protocol < 0xC000 && protp->protocol != PPP_CCP && protp->protocol != PPP_ECP
-	    && protp->enabled_flag && protp->open != NULL) {	   
-		   
-            	    (*protp->open)(0);
-            
-		    FUNC_DEBUG("\nprotp->protocol: 0x%x\n",protp->protocol); 
-	    	    if (protp->open != NULL)
-	    		FUNC_DEBUG("Open is Not NULL! %s:%d\n",__FUNCTION__,__LINE__);
-	    	    else 
-			FUNC_DEBUG("Open is NULL! %s:%d\n",__FUNCTION__,__LINE__);    
-
-
-	            if (protp->enabled_flag == 0)
-			FUNC_DEBUG("Flag is Zero! %s:%d\n",__FUNCTION__,__LINE__);
-            	    else 
-	        	FUNC_DEBUG("Flag is Not Zero! %s:%d\n",__FUNCTION__,__LINE__); 	    
-
-	    	    ++num_np_open;
-
-		    FUNC_DEBUG("\nnum_np_open within loop is %d!\n",num_np_open);
-       	}
-    }
-
-    FUNC_DEBUG("\nnum_np_open again is %d!",num_np_open); 
-    if (num_np_open == 0) {
+    if (num_np_open == 0)
 	/* nothing to do */
-	
 	lcp_close(0, "No network protocols running");
-    }
 }
 
 /*
@@ -1122,7 +1059,6 @@ np_up(unit, proto)
     int unit, proto;
 {
     int tlim;
-    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
     if (num_np_up == 0) {
 	/*
@@ -1167,7 +1103,6 @@ void
 np_down(unit, proto)
     int unit, proto;
 {
-    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     if (--num_np_up == 0) {
 	UNTIMEOUT(check_idle, NULL);
 	UNTIMEOUT(connect_time_expired, NULL);
@@ -1185,7 +1120,6 @@ void
 np_finished(unit, proto)
     int unit, proto;
 {
-    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     if (--num_np_open <= 0) {
 	/* no further use for the link: shut up shop. */
 	lcp_close(0, "No network protocols running");
@@ -1197,11 +1131,8 @@ static void
 check_maxoctets(arg)
     void *arg;
 {
-    
     int diff;
     unsigned int used;
-
-    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
     update_link_stats(ifunit);
     link_stats_valid=0;
@@ -1241,11 +1172,9 @@ static void
 check_idle(arg)
     void *arg;
 {
-   
     struct ppp_idle idle;
     time_t itime;
     int tlim;
-    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
 
     if (!get_idle_time(0, &idle))
 	return;
@@ -1273,7 +1202,6 @@ static void
 connect_time_expired(arg)
     void *arg;
 {
-    FUNC_DEBUG("%s: %d\n", __FUNCTION__,__LINE__);
     info("Connect time expired");
     status = EXIT_CONNECT_TIME;
     lcp_close(0, "Connect time expired");	/* Close connection */

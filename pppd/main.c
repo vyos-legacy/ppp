@@ -126,8 +126,6 @@ static const char rcsid[] = RCSID;
 /* interface vars */
 char ifname[32];		/* Interface name */
 int ifunit;			/* Interface unit number */
-int bundle_unit=-1;		/* Unit for Master device */
-int multilink_in_bundle=0;	/* Are we in multilink bundle */
 
 struct channel *the_channel;
 
@@ -558,7 +556,7 @@ main(argc, argv)
 	/* restore FSMs to original state */
 	lcp_close(0, "");
 
-        if (!persist || asked_to_quit)
+	if (!persist || asked_to_quit || (maxfail > 0 && unsuccess >= maxfail))
 	    break;
 
 	if (demand)

@@ -793,7 +793,6 @@ void tty_close_fds()
 
 void cleanup_tty()
 {
-	FUNC_DEBUG("%s:%s: %d\n", __FILE__,__FUNCTION__,__LINE__);
 	if (real_ttyfd >= 0)
 		finish_tty();
 	tty_close_fds();
@@ -801,7 +800,6 @@ void cleanup_tty()
 		unlock();
 		locked = 0;
 	}
-	FUNC_DEBUG("%s:%s: %d exit\n", __FILE__,__FUNCTION__,__LINE__);
 }
 
 /*
@@ -824,8 +822,6 @@ tty_do_send_config(mtu, accm, pcomp, accomp)
 static void
 finish_tty()
 {
-	FUNC_DEBUG("%s:%s: %d\n", __FILE__,__FUNCTION__,__LINE__);
-
 	/* drop dtr to hang up */
 	if (!default_device && modem) {
 		setdtr(real_ttyfd, 0);
@@ -847,8 +843,6 @@ finish_tty()
 
 	close(real_ttyfd);
 	real_ttyfd = -1;
-
-	FUNC_DEBUG("%s:%s: %d exit\n", __FILE__,__FUNCTION__,__LINE__);
 }
 
 /*
