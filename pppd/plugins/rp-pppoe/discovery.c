@@ -13,10 +13,6 @@ static char const RCSID[] =
 
 #include "pppoe.h"
 
-#ifdef HAVE_SYSLOG_H
-#include <syslog.h>
-#endif
-
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -167,24 +163,21 @@ parsePADOTags(UINT16_t type, UINT16_t len, unsigned char *data,
 	if (conn->printACNames) {
 	    printf("Got a Service-Name-Error tag: %.*s\n", (int) len, data);
 	} else {
-	    syslog(LOG_ERR, "PADO: Service-Name-Error: %.*s", (int) len, data);
-	    exit(1);
+	    fatal("PADO: Service-Name-Error: %.*s", (int) len, data);
 	}
 	break;
     case TAG_AC_SYSTEM_ERROR:
 	if (conn->printACNames) {
 	    printf("Got a System-Error tag: %.*s\n", (int) len, data);
 	} else {
-	    syslog(LOG_ERR, "PADO: System-Error: %.*s", (int) len, data);
-	    exit(1);
+	    fatal("PADO: System-Error: %.*s", (int) len, data);
 	}
 	break;
     case TAG_GENERIC_ERROR:
 	if (conn->printACNames) {
 	    printf("Got a Generic-Error tag: %.*s\n", (int) len, data);
 	} else {
-	    syslog(LOG_ERR, "PADO: Generic-Error: %.*s", (int) len, data);
-	    exit(1);
+	    fatal("PADO: Generic-Error: %.*s", (int) len, data);
 	}
 	break;
     }
@@ -209,20 +202,14 @@ parsePADSTags(UINT16_t type, UINT16_t len, unsigned char *data,
     PPPoEConnection *conn = (PPPoEConnection *) extra;
     switch(type) {
     case TAG_SERVICE_NAME:
-	syslog(LOG_DEBUG, "PADS: Service-Name: '%.*s'", (int) len, data);
+	dbglog("PADS: Service-Name: '%.*s'", (int) len, data);
 	break;
     case TAG_SERVICE_NAME_ERROR:
-	syslog(LOG_ERR, "PADS: Service-Name-Error: %.*s", (int) len, data);
-	fprintf(stderr, "PADS: Service-Name-Error: %.*s\n", (int) len, data);
-	exit(1);
+	fatal("PADS: Service-Name-Error: %.*s", (int) len, data);
     case TAG_AC_SYSTEM_ERROR:
-	syslog(LOG_ERR, "PADS: System-Error: %.*s", (int) len, data);
-	fprintf(stderr, "PADS: System-Error: %.*s\n", (int) len, data);
-	exit(1);
+	fatal("PADS: System-Error: %.*s", (int) len, data);
     case TAG_GENERIC_ERROR:
-	syslog(LOG_ERR, "PADS: Generic-Error: %.*s", (int) len, data);
-	fprintf(stderr, "PADS: Generic-Error: %.*s\n", (int) len, data);
-	exit(1);
+	fatal("PADS: Generic-Error: %.*s", (int) len, data);
     case TAG_RELAY_SESSION_ID:
 	conn->relayId.type = htons(type);
 	conn->relayId.length = htons(len);
@@ -336,7 +323,7 @@ waitForPADO(PPPoEConnection *conn, int timeout)
 		if (r >= 0 || errno != EINTR) break;
 	    }
 	    if (r < 0) {
-		fatalSys("select (waitForPADO)");
+		fatal("waitForPADO: select: %m");
 	    }
 	    if (r == 0) return;        /* Timed out */
 	}
@@ -346,8 +333,7 @@ waitForPADO(PPPoEConnection *conn, int timeout)
 
 	/* Check length */
 	if (ntohs(packet.length) + HDR_SIZE > len) {
-	    syslog(LOG_ERR, "Bogus PPPoE length field (%u)",
-		   (unsigned int) ntohs(packet.length));
+	    error("Bogus PPPoE length field (%u)", ntohs(packet.length));
 	    continue;
 	}
 
@@ -366,16 +352,16 @@ waitForPADO(PPPoEConnection *conn, int timeout)
 
 	if (packet.code == CODE_PADO) {
 	    if (BROADCAST(packet.ethHdr.h_source)) {
-		printErr("Ignoring PADO packet from broadcast MAC address");
+		error("Ignoring PADO packet from broadcast MAC address");
 		continue;
 	    }
 	    parsePacket(&packet, parsePADOTags, &pc);
 	    if (!pc.seenACName) {
-		printErr("Ignoring PADO packet with no AC-Name tag");
+		error("Ignoring PADO packet with no AC-Name tag");
 		continue;
 	    }
 	    if (!pc.seenServiceName) {
-		printErr("Ignoring PADO packet with no Service-Name tag");
+		error("Ignoring PADO packet with no Service-Name tag");
 		continue;
 	    }
 	    conn->numPADOs++;
@@ -513,7 +499,7 @@ waitForPADS(PPPoEConnection *conn, int timeout)
 		if (r >= 0 || errno != EINTR) break;
 	    }
 	    if (r < 0) {
-		fatalSys("select (waitForPADS)");
+		fatal("waitForPADS: select: %m");
 	    }
 	    if (r == 0) return;
 	}
@@ -523,8 +509,7 @@ waitForPADS(PPPoEConnection *conn, int timeout)
 
 	/* Check length */
 	if (ntohs(packet.length) + HDR_SIZE > len) {
-	    syslog(LOG_ERR, "Bogus PPPoE length field (%u)",
-		   (unsigned int) ntohs(packet.length));
+	    error("Bogus PPPoE length field (%u)", ntohs(packet.length));
 	    continue;
 	}
 
@@ -556,11 +541,12 @@ waitForPADS(PPPoEConnection *conn, int timeout)
     /* Don't bother with ntohs; we'll just end up converting it back... */
     conn->session = packet.session;
 
-    syslog(LOG_INFO, "PPP session is %d", (int) ntohs(conn->session));
+    info("PPP session is %d", ntohs(conn->session));
 
     /* RFC 2516 says session id MUST NOT be zero or 0xFFFF */
     if (ntohs(conn->session) == 0 || ntohs(conn->session) == 0xFFFF) {
-	syslog(LOG_ERR, "Access concentrator used a session value of %x -- the AC is violating RFC 2516", (unsigned int) ntohs(conn->session));
+	error("Access concentrator used a session value of 0x%x"
+	    " -- the AC is violating RFC 2516", ntohs(conn->session));
     }
 }
 
@@ -620,7 +606,7 @@ discovery(PPPoEConnection *conn)
 
     /* If we're only printing access concentrator names, we're done */
     if (conn->printACNames) {
-	die(0);
+	exit(0);
     }
 
     timeout = PADI_TIMEOUT;
