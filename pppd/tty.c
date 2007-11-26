@@ -547,7 +547,7 @@ int connect_tty()
 	}
 
 	/*
-	 * Open the serial device and set it up to be the ppp interface.
+	 * Open The serial device and set it up to be the ppp interface.
 	 * First we open it in non-blocking mode so we can set the
 	 * various termios flags appropriately.  If we aren't dialling
 	 * out and we want to use the modem lines, we reopen it later
