@@ -6,11 +6,3 @@ pppd/pppd
 pppdump/pppdump
 pppstats/pppstats
 pppd/plugins/rp-pppoe/pppoe-discovery
-chat/Makefile
-pppd/Makefile
-pppd/plugins/Makefile
-pppd/plugins/pppoatm/Makefile
-pppd/plugins/radius/Makefile
-pppd/plugins/rp-pppoe/Makefile
-pppdump/Makefile
-pppstats/Makefile
