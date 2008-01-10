@@ -22,6 +22,8 @@ install: $(BINDIR) $(MANDIR)/man8 install-progs install-devel
 	$(INSTALL) -c -m 755 scripts/plog $(BINDIR)/.
 	$(INSTALL) -c -m 755 scripts/ppp-off $(BINDIR)/.
 	$(INSTALL) -c -m 755 scripts/pallon $(BINDIR)/.
+	mkdir -p $(DESTDIR)/etc/init.d
+	$(INSTALL) -c -m 755 scripts/vyatta-ppp $(DESTDIR)/etc/init.d
 
 install-progs:
 	cd chat; $(MAKE) $(MFLAGS) install

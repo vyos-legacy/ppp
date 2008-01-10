@@ -1,3 +1,9 @@
+vyatta-ppp (2.4.4rel-vyatta-1) unstable; urgency=high
+
+  * Vyatta changes
+
+ -- Rick Balocca <rbalocca@vyatta.com>  Thu, 10 Jan 2008 13:45:30 -0700
+
 ppp (2.4.4rel-8) unstable; urgency=high
 
   * urgency high since fixes an RC bug

@@ -1,0 +1,94 @@
+#!/bin/sh
+# Module: vyatta-ppp
+# 
+# **** License ****
+# Version: VPL 1.0
+# 
+# The contents of this file are subject to the Vyatta Public License
+# Version 1.0 ("License"); you may not use this file except in
+# compliance with the License. You may obtain a copy of the License at
+# http://www.vyatta.com/vpl
+# 
+# Software distributed under the License is distributed on an "AS IS"
+# basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+# the License for the specific language governing rights and limitations
+# under the License.
+# 
+# This code was originally developed by Vyatta, Inc.
+# Portions created by Vyatta are Copyright (C) 2006, 2007 Vyatta, Inc.
+# All Rights Reserved.
+# 
+# Author: Rick Balocca
+# Date: 2006
+# Description:
+# 
+# **** End License ****
+
+[ x"/etc/ppp/peers/wan*" = x ] && exit 0
+
+ACTION=$1
+WANPIPE=$2
+
+if [ "${WANPIPE}" ]
+then
+	WANPIPE_INDEX=`expr ${WANPIPE} - 1`.1
+else
+	WANPIPE_INDEX=
+fi
+
+#LOG_FILE=/tmp/${WANPIPE_INDEX}vywan.log
+LOG_FILE=/dev/null
+PPPD_LOG_FILE=/var/log/wan${WANPIPE_INDEX}.log
+PPP_INTERFACE_FILE=wan${WANPIPE_INDEX}
+PPP_OFFSETS_DIR=/tmp/.offsets/ppp/
+PPP_OFFSETS_FILE_WAN=${PPP_OFFSETS_DIR}wan${WANPIPE_INDEX}
+
+start()
+{
+	if [ "${WANPIPE}" ]
+	then
+		echo "Starting pppd">>${LOG_FILE}
+		date>>${LOG_FILE}
+		rm -rf ${PPP_OFFSETS_FILE_WAN} 2>>/dev/null
+		/sbin/pon ${PPP_INTERFACE_FILE}</dev/null >>${PPPD_LOG_FILE}  2>&1 &
+	else
+		echo "Starting ALL pppd ... ">>${LOG_FILE}
+		rm -rf ${PPP_OFFSETS_DIR}* 2>>/dev/null
+		/sbin/pallon >>${LOG_FILE} 2>&1
+		echo "Starting ALL pppd done">>${LOG_FILE}
+	fi
+}
+
+stop()
+{
+	echo "Stopping pppd ${WANPIPE}...">>${LOG_FILE}
+	if [ "${WANPIPE}" ]
+	then
+		date>>${LOG_FILE}
+		/sbin/poff ${PPP_INTERFACE_FILE}
+		rm -rf ${PPP_OFFSETS_FILE_WAN} 2>>/dev/null
+	else
+		/sbin/poff -a 
+		rm -rf ${PPP_OFFSETS_DIR}* 2>>/dev/null
+	fi
+	echo "Stopping pppd done">>${LOG_FILE}
+}
+
+case "$ACTION" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	restart)
+		stop
+		start
+		;;
+	*)
+		echo "usage: $0 {start|stop|restart}"
+		exit 1
+		;;
+esac
+
+exit 0
