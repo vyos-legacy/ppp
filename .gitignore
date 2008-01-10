@@ -6,3 +6,7 @@ pppd/pppd
 pppdump/pppdump
 pppstats/pppstats
 pppd/plugins/rp-pppoe/pppoe-discovery
+build-stamp
+configure-stamp
+debian/files
+debian/vyatta-ppp*
