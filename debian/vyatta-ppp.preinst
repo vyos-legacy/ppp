@@ -1,0 +1,12 @@
+#!/bin/sh -e
+
+case "$1" in
+    install|upgrade)
+    if dpkg --compare-versions "$2" le "2.4.4b1-1"; then
+	rm -f /etc/init.d/ppp
+	update-rc.d ppp remove
+    fi
+    ;;
+esac
+
+#DEBHELPER#
