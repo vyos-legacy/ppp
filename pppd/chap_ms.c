@@ -852,7 +852,7 @@ ChapMS2(u_char *rchallenge, u_char *PeerChallenge,
     u_char *p = &response[MS_CHAP2_PEER_CHALLENGE];
     int i;
 
-    BZERO(response, MS_CHAP2_RESPONSE_LEN);
+    BZERO(response, sizeof(*response));
 
     /* Generate the Peer-Challenge if requested, or copy it if supplied. */
     if (!PeerChallenge)

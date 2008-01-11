@@ -72,7 +72,6 @@ static int try_pvc(const char *text,struct sockaddr_atmpvc *addr,int flags)
 }
 
 
-#ifdef USE_COMPLEX_ATM_RESOLVER
 static int do_try_nsap(const char *text,struct sockaddr_atmsvc *addr,int flags)
 {
     const char *walk;
@@ -222,7 +221,6 @@ static int try_name(const char *text,struct sockaddr *addr,int length,
     (void) fclose(file);
     return result;
 }
-#endif
 
 
 int text2atm(const char *text,struct sockaddr *addr,int length,int flags)
@@ -236,7 +234,6 @@ int text2atm(const char *text,struct sockaddr *addr,int length,int flags)
 	result = try_pvc(text,(struct sockaddr_atmpvc *) addr,flags);
 	if (result != TRY_OTHER) return result;
     }
-#ifdef USE_COMPLEX_ATM_RESOLVER
     if ((flags & T2A_SVC) && length >= sizeof(struct sockaddr_atmsvc)) {
 	result = try_nsap(text,(struct sockaddr_atmsvc *) addr,flags);
 	if (result != TRY_OTHER) return result;
@@ -248,6 +245,5 @@ int text2atm(const char *text,struct sockaddr *addr,int length,int flags)
     if (result == TRY_OTHER && !(flags & T2A_LOCAL))
 	result = ans_byname(text,(struct sockaddr_atmsvc *) addr,length,flags);
     if (result != TRY_OTHER) return result;
-#endif
     return -1;
 }
