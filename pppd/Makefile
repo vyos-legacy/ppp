@@ -4,10 +4,10 @@
 #
 
 # Default installation locations
-DESTDIR = $(INSTROOT)/usr/local
+DESTDIR = $(INSTROOT)
 BINDIR = $(DESTDIR)/sbin
-MANDIR = $(DESTDIR)/share/man/man8
-INCDIR = $(DESTDIR)/include
+MANDIR = $(DESTDIR)/usr/local/share/man/man8
+INCDIR = $(DESTDIR)/usr/include
 
 TARGETS = pppd
 

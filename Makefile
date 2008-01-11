@@ -1,9 +1,9 @@
 # PPP top-level Makefile for Linux.
 
-DESTDIR = $(INSTROOT)/usr/local
+DESTDIR = $(INSTROOT)
 BINDIR = $(DESTDIR)/sbin
-INCDIR = $(DESTDIR)/include
-MANDIR = $(DESTDIR)/share/man
+INCDIR = $(DESTDIR)/usr/include
+MANDIR = $(DESTDIR)/usr/local/share/man
 ETCDIR = $(INSTROOT)/etc/ppp
 
 # uid 0 = root
