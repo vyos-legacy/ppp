@@ -1498,8 +1498,10 @@ check_passwd(unit, auser, userlen, apasswd, passwdlen, msg)
 	    }
 	    if (secret[0] != 0 && !login_secret) {
 		/* password given in pap-secrets - must match */
+#ifndef NO_CRYPT_HACK
 		if ((cryptpap || strcmp(passwd, secret) != 0)
 		    && strcmp(crypt(passwd, secret), secret) != 0)
+#endif
 		    ret = UPAP_AUTHNAK;
 	    }
 	}
@@ -1701,8 +1703,10 @@ plogin(user, passwd, msg)
     /*
      * If no passwd, don't let them login.
      */
+#ifndef NO_CRYPT_HACK
     if (pw->pw_passwd == NULL || strlen(pw->pw_passwd) < 2
 	|| strcmp(crypt(passwd, pw->pw_passwd), pw->pw_passwd) != 0)
+#endif
 	return (UPAP_AUTHNAK);
 
 #endif /* #ifdef USE_PAM */

@@ -18,10 +18,6 @@ static char const RCSID[] =
 
 #include "pppoe.h"
 
-#ifdef HAVE_SYSLOG_H
-#include <syslog.h>
-#endif
-
 #include <string.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -50,17 +46,17 @@ parsePacket(PPPoEPacket *packet, ParseFunc *func, void *extra)
     UINT16_t tagType, tagLen;
 
     if (packet->ver != 1) {
-	syslog(LOG_ERR, "Invalid PPPoE version (%d)", (int) packet->ver);
+	error("Invalid PPPoE version (%u)", packet->ver);
 	return -1;
     }
     if (packet->type != 1) {
-	syslog(LOG_ERR, "Invalid PPPoE type (%d)", (int) packet->type);
+	error("Invalid PPPoE type (%u)", packet->type);
 	return -1;
     }
 
     /* Do some sanity checks on packet */
     if (len > ETH_DATA_LEN - 6) { /* 6-byte overhead for PPPoE header */
-	syslog(LOG_ERR, "Invalid PPPoE packet length (%u)", len);
+	error("Invalid PPPoE packet length (%u)", len);
 	return -1;
     }
 
@@ -76,7 +72,7 @@ parsePacket(PPPoEPacket *packet, ParseFunc *func, void *extra)
 	    return 0;
 	}
 	if ((curTag - packet->payload) + tagLen + TAG_HDR_SIZE > len) {
-	    syslog(LOG_ERR, "Invalid PPPoE tag length (%u)", tagLen);
+	    error("Invalid PPPoE tag length (%u)", tagLen);
 	    return -1;
 	}
 	func(tagType, tagLen, curTag+TAG_HDR_SIZE, extra);
@@ -105,17 +101,17 @@ findTag(PPPoEPacket *packet, UINT16_t type, PPPoETag *tag)
     UINT16_t tagType, tagLen;
 
     if (packet->ver != 1) {
-	syslog(LOG_ERR, "Invalid PPPoE version (%d)", (int) packet->ver);
+	error("Invalid PPPoE version (%u)", packet->ver);
 	return NULL;
     }
     if (packet->type != 1) {
-	syslog(LOG_ERR, "Invalid PPPoE type (%d)", (int) packet->type);
+	error("Invalid PPPoE type (%u)", packet->type);
 	return NULL;
     }
 
     /* Do some sanity checks on packet */
     if (len > ETH_DATA_LEN - 6) { /* 6-byte overhead for PPPoE header */
-	syslog(LOG_ERR, "Invalid PPPoE packet length (%u)", len);
+	error("Invalid PPPoE packet length (%u)", len);
 	return NULL;
     }
 
@@ -131,7 +127,7 @@ findTag(PPPoEPacket *packet, UINT16_t type, PPPoETag *tag)
 	    return NULL;
 	}
 	if ((curTag - packet->payload) + tagLen + TAG_HDR_SIZE > len) {
-	    syslog(LOG_ERR, "Invalid PPPoE tag length (%u)", tagLen);
+	    error("Invalid PPPoE tag length (%u)", tagLen);
 	    return NULL;
 	}
 	if (tagType == type) {
@@ -143,6 +139,7 @@ findTag(PPPoEPacket *packet, UINT16_t type, PPPoETag *tag)
     return NULL;
 }
 
+#ifdef unused
 /**********************************************************************
 *%FUNCTION: printErr
 *%ARGUMENTS:
@@ -158,6 +155,7 @@ printErr(char const *str)
     fprintf(stderr, "pppoe: %s\n", str);
     syslog(LOG_ERR, "%s", str);
 }
+#endif
 
 
 /**********************************************************************
@@ -172,7 +170,7 @@ strDup(char const *str)
 {
     char *copy = malloc(strlen(str)+1);
     if (!copy) {
-	rp_fatal("strdup failed");
+	fatal("strdup failed");
     }
     strcpy(copy, str);
     return copy;
@@ -467,9 +465,10 @@ sendPADT(PPPoEConnection *conn, char const *msg)
 	fprintf(conn->debugFile, "\n");
 	fflush(conn->debugFile);
     }
-    syslog(LOG_INFO,"Sent PADT");
+    info("Sent PADT");
 }
 
+#ifdef unused
 /**********************************************************************
 *%FUNCTION: parseLogErrs
 *%ARGUMENTS:
@@ -501,4 +500,5 @@ parseLogErrs(UINT16_t type, UINT16_t len, unsigned char *data,
 	break;
     }
 }
+#endif
 
