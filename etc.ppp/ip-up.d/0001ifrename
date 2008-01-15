@@ -33,10 +33,14 @@
 # **** End License ****
 
 OLD_IFNAME="$1"
-PPP_IPPARAM="$6"
+NEW_IFNAME=`echo "$6"|awk '{ print $2 }'`
+NET=`echo "$6"|awk '{ print $1 }'`
 
 if ifconfig "$OLD_IFNAME" down
 then
-	ifrename -i "$OLD_IFNAME" -n "$PPP_IPPARAM"
-	ifconfig "$PPP_IPPARAM" up
+	ifrename -c /dev/null -i "$OLD_IFNAME" -n "$NEW_IFNAME"
+	ifconfig "$NEW_IFNAME" up
+	sleep 3
+	[ "$NET" ] && route add -net "$NET" "$NEW_IFNAME"
+	route
 fi

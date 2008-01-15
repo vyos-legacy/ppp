@@ -318,9 +318,6 @@ main(argc, argv)
     struct protent *protp;
     char numbuf[16];
 
-    strlcpy(path_ipup, _PATH_IPUP, sizeof(path_ipup));
-    strlcpy(path_ipdown, _PATH_IPDOWN, sizeof(path_ipdown));
-
     link_stats_valid = 0;
     new_phase(PHASE_INITIALIZE);
 
@@ -775,7 +772,8 @@ detach()
 	/* update pid files if they have been written already */
 	if (pidfilename[0])
 	    create_pidfile(pid);
-	create_linkpidfile(pid);
+	if (linkpidfile[0])
+	    create_linkpidfile(pid);
 	exit(0);		/* parent dies */
     }
     setsid();
@@ -1603,8 +1601,6 @@ safe_fork(int infd, int outfd, int errfd)
 	if (errfd == 0 || errfd == 1)
 		errfd = dup(errfd);
 
-	closelog();
-
 	/* dup the in, out, err fds to 0, 1, 2 */
 	if (infd != 0)
 		dup2(infd, 0);
@@ -1613,6 +1609,7 @@ safe_fork(int infd, int outfd, int errfd)
 	if (errfd != 2)
 		dup2(errfd, 2);
 
+	closelog();
 	if (log_to_fd > 2)
 		close(log_to_fd);
 	if (the_channel->close)
@@ -1654,7 +1651,7 @@ device_script(program, in, out, dont_wait)
     if (log_to_fd >= 0)
 	errfd = log_to_fd;
     else
-	errfd = open(_PATH_CONNERRS, O_WRONLY | O_APPEND | O_CREAT, 0644);
+	errfd = open(_PATH_CONNERRS, O_WRONLY | O_APPEND | O_CREAT, 0600);
 
     ++conn_running;
     pid = safe_fork(in, out, errfd);
@@ -1976,11 +1973,9 @@ script_setenv(var, value, iskey)
 		free(p-1);
 		script_env[i] = newstring;
 #ifdef USE_TDB
-		if (pppdb != NULL) {
-		    if (iskey)
-			add_db_key(newstring);
-		    update_db_entry();
-		}
+		if (iskey && pppdb != NULL)
+		    add_db_key(newstring);
+		update_db_entry();
 #endif
 		return;
 	    }

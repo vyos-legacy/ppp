@@ -16,7 +16,7 @@ all:
 	cd pppstats; $(MAKE) $(MFLAGS) all
 	cd pppdump; $(MAKE) $(MFLAGS) all
 
-install: $(BINDIR) $(MANDIR)/man8 install-progs install-devel
+install: $(BINDIR) $(MANDIR)/man8 install-progs install-devel install-etcppp
 	$(INSTALL) -c -m 755 scripts/pon $(BINDIR)/.
 	$(INSTALL) -c -m 755 scripts/poff $(BINDIR)/.
 	$(INSTALL) -c -m 755 scripts/plog $(BINDIR)/.

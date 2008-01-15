@@ -35,6 +35,7 @@ static char const RCSID[] =
 #include "pppd/pathnames.h"
 
 #include <linux/types.h>
+#include <syslog.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -172,8 +173,10 @@ PPPOEConnectDevice(void)
 	    (unsigned) conn->peerEth[5]);
 
     if (connect(conn->sessionSocket, (struct sockaddr *) &sp,
-		sizeof(struct sockaddr_pppox)) < 0)
+		sizeof(struct sockaddr_pppox)) < 0) {
 	fatal("Failed to connect PPPoE socket: %d %m", errno);
+	return -1;
+    }
 
     return conn->sessionSocket;
 }
@@ -317,9 +320,11 @@ plugin_init(void)
     }
 
     add_options(Options);
+
+    info("RP-PPPoE plugin version %s compiled against pppd %s",
+	 RP_VERSION, VERSION);
 }
 
-#ifdef unused
 /**********************************************************************
 *%FUNCTION: fatalSys
 *%ARGUMENTS:
@@ -373,7 +378,6 @@ sysErr(char const *str)
 {
     rp_fatal(str);
 }
-#endif
 
 void pppoe_check_options(void)
 {

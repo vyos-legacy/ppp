@@ -1232,7 +1232,7 @@ ipv6cp_up(f)
 	    }
 
 	}
-	demand_rexmit(PPP_IPV6,0);
+	demand_rexmit(PPP_IPV6);
 	sifnpmode(f->unit, PPP_IPV6, NPMODE_PASS);
 
     } else {

@@ -61,14 +61,14 @@ HAVE_MULTILINK=y
 USE_TDB=y
 
 HAS_SHADOW=y
-USE_PAM=y
-HAVE_INET6=y
+#USE_PAM=y
+#HAVE_INET6=y
 
 # Enable plugins
 PLUGIN=y
 
 # Enable Microsoft proprietary Callback Control Protocol
-CBCP=y
+#CBCP=y
 
 # Enable EAP SRP-SHA1 authentication (requires libsrp)
 #USE_SRP=y
@@ -117,13 +117,9 @@ CFLAGS   += -DHAS_SHADOW
 #LIBS     += -lshadow $(LIBS)
 endif
 
-ifdef NO_CRYPT_HACK
-CFLAGS += -DNO_CRYPT_HACK
-else
 ifneq ($(wildcard /usr/include/crypt.h),)
 CFLAGS  += -DHAVE_CRYPT_H=1
 LIBS	+= -lcrypt
-endif
 endif
 
 ifdef NEEDDES
@@ -173,8 +169,10 @@ LIBS	+= -ldl
 endif
 
 ifdef FILTER
+ifneq ($(wildcard /usr/include/pcap-bpf.h),)
 LIBS    += -lpcap
 CFLAGS  += -DPPP_FILTER
+endif
 endif
 
 ifdef HAVE_INET6
