@@ -42,6 +42,10 @@ if [ ! -c /dev/ppp -a -e /dev/MAKEDEV ]; then
   ./MAKEDEV ppp
 fi
 
+if [ ! -e /usr/sbin/pppd ]; then
+  ln -s /sbin/pppd /usr/sbin/pppd
+fi
+
 }
 
 case "$1" in

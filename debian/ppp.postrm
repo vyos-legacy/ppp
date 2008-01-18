@@ -13,6 +13,12 @@ delete_var_files() {
 	/var/log/ppp-ipupdown.log
 }
 
+delete_links () {
+  if [ -h /usr/sbin/pppd ]; then
+    rm -f /usr/sbin/pppd
+  fi
+}
+
 case "$1" in
     remove)
     ;;
@@ -20,6 +26,7 @@ case "$1" in
     purge)
     delete_etc_files
     delete_var_files
+    delete_links
     ;;
 
     upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
