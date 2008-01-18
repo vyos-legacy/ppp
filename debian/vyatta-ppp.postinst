@@ -19,11 +19,11 @@ for file in pap-secrets chap-secrets; do
 done
 
 # install template provider files
-if [ ! -f /etc/ppp/peers/provider ]; then
+if [ ! -f /etc/ppp/peers/provider -a -f /usr/share/ppp/provider.peer ]; then
   install -g dip -m 640 /usr/share/ppp/provider.peer \
 			/etc/ppp/peers/provider
 fi
-if [ ! -f /etc/chatscripts/provider ]; then
+if [ ! -f /etc/chatscripts/provider -a -f /usr/share/ppp/provider.chatscript ]; then
   install -g dip -m 640 /usr/share/ppp/provider.chatscript \
 			/etc/chatscripts/provider
 fi
