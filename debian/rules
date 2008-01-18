@@ -54,7 +54,7 @@ install: build
 	dh_installdirs
 
 	# Add here commands to install the package into the right dir
-	$(MAKE) install INSTROOT="$(PWD)/debian/vyatta-ppp/"
+	$(MAKE) install INSTROOT="$(PWD)/debian/ppp/"
 
 # Build architecture-independent files here.
 binary-indep: build install
