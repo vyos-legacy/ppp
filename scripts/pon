@@ -37,6 +37,7 @@ The file /etc/ppp/peers/$1 does not exist.
   exit 1
 fi
 
+[ ! -f /etc/ppp/peers/${@:-provider} ] && exit 0
 /sbin/pppd call ${@:-provider}
 ret=$?
 echo pppd returned $ret
@@ -48,6 +49,7 @@ esac
 
 while true
 do
+  [ ! -f /etc/ppp/peers/${@:-provider} ] && exit 0
   /sbin/pppd call ${@:-provider}
   sleep 9
 done&
