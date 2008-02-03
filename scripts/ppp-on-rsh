@@ -22,11 +22,7 @@ export LOC_IP REM_IP
 #
 PPPD_RHOST=myremotehost
 
-#
-# For this example, we assume that pppd on both local and remote
-# machines reside in the same place, /usr/local/bin/pppd
-#
-PPPD_LOC=/usr/local/bin/pppd
+PPPD_LOC=pppd
 
 #
 # The location of local options file (where rsh client is running).

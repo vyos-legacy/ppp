@@ -13,7 +13,7 @@
 # $Id: Makefile.linux,v 1.7 2006/06/04 05:07:46 paulus Exp $
 #***********************************************************************
 
-DESTDIR = $(INSTROOT)/usr/local
+DESTDIR = $(INSTROOT)/usr
 BINDIR = $(DESTDIR)/sbin
 LIBDIR = $(DESTDIR)/lib/pppd/$(PPPDVERSION)
 

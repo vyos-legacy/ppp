@@ -6,7 +6,7 @@
 # Default installation locations
 DESTDIR = $(INSTROOT)
 BINDIR = $(DESTDIR)/sbin
-MANDIR = $(DESTDIR)/usr/local/share/man/man8
+MANDIR = $(DESTDIR)/usr/share/man/man8
 INCDIR = $(DESTDIR)/usr/include
 
 TARGETS = pppd
@@ -79,7 +79,7 @@ INCLUDE_DIRS= -I../include
 
 COMPILE_FLAGS= -DHAVE_PATHS_H -DIPX_CHANGE -DHAVE_MMAP
 
-CFLAGS= $(COPTS) $(COMPILE_FLAGS) $(INCLUDE_DIRS) '-DDESTDIR="/usr/local"'
+CFLAGS= $(COPTS) $(COMPILE_FLAGS) $(INCLUDE_DIRS) '-DDESTDIR="/usr"'
 
 ifdef CHAPMS
 CFLAGS   += -DCHAPMS=1

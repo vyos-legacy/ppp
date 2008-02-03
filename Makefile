@@ -3,7 +3,7 @@
 DESTDIR = $(INSTROOT)
 BINDIR = $(DESTDIR)/sbin
 INCDIR = $(DESTDIR)/usr/include
-MANDIR = $(DESTDIR)/usr/local/share/man
+MANDIR = $(DESTDIR)/usr/share/man
 ETCDIR = $(INSTROOT)/etc/ppp
 
 # uid 0 = root

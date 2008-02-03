@@ -6,7 +6,7 @@ INSTALL	= install
 
 #***********************************************************************
 
-DESTDIR = $(INSTROOT)/usr/local
+DESTDIR = $(INSTROOT)/usr
 LIBDIR = $(DESTDIR)/lib/pppd/$(VERSION)
 
 VERSION = $(shell awk -F '"' '/VERSION/ { print $$2; }' ../../patchlevel.h)

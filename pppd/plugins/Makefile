@@ -4,7 +4,7 @@ CFLAGS	= $(COPTS) -I.. -I../../include -fPIC
 LDFLAGS	= -shared
 INSTALL	= install
 
-DESTDIR = $(INSTROOT)/usr/local
+DESTDIR = $(INSTROOT)/usr
 BINDIR = $(DESTDIR)/sbin
 MANDIR = $(DESTDIR)/share/man/man8
 LIBDIR = $(DESTDIR)/lib/pppd/$(VERSION)

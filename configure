@@ -2,7 +2,7 @@
 # $Id: configure,v 1.37 2005/06/26 23:53:17 carlsonj Exp $
 
 # Where to install stuff by default
-DESTDIR=/usr/local
+DESTDIR=/usr
 SYSCONF=/etc
 
 # Parse arguments

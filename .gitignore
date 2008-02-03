@@ -9,4 +9,4 @@ pppd/plugins/rp-pppoe/pppoe-discovery
 build-stamp
 configure-stamp
 debian/files
-debian/ppp
+debian/vyatta-ppp
