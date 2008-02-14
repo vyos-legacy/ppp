@@ -24,7 +24,7 @@ install: $(BINDIR) $(MANDIR)/man8 install-progs install-devel install-etcppp
 	$(INSTALL) -c -m 755 scripts/pallon $(BINDIR)/.
 	mkdir -p $(DESTDIR)/etc/init.d
 	$(INSTALL) -c -m 755 scripts/vyatta-ppp $(DESTDIR)/etc/init.d
-	(cd $(DESTDIR)/usr/sbin;ln -s ../../sbin/pppd .)
+	(cd $(DESTDIR)/usr/sbin;ln -s -f ../../sbin/pppd .)
 
 install-progs:
 	cd chat; $(MAKE) $(MFLAGS) install
