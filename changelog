@@ -1,3 +1,9 @@
+vyatta-ppp (2.4.4rel-8-vyatta-2) unstable; urgency=low
+
+  * Switch from package name "ppp" to package name "vyatta-ppp"
+
+ -- rbalocca <rbalocca@vyatta.com>  Tue, 19 Feb 2008 12:48:55 -0800
+
 ppp (2.4.4rel-8-vyatta-1) unstable; urgency=high
 
   * Vyatta changes
