@@ -1,3 +1,21 @@
+vyatta-ppp (2.4.4rel-8-vyatta-3) unstable; urgency=low
+
+  vc4.0.0
+  [ Mark O'Brien ]
+
+
+  [ rbalocca ]
+  * Add symlink needed for VPN
+  * Force symlink /usr/sbin/pppd during install
+  * Fix lintian errors in ppp
+  * Additional changelog info
+  * Note in the changelog the switch of this package's name from ppp to
+    vyatta-ppp
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Mon, 25 Feb 2008 17:37:52 -0800
+
 vyatta-ppp (2.4.4rel-8-vyatta-2) unstable; urgency=low
 
   * Switch from package name "ppp" to package name "vyatta-ppp"
