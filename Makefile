@@ -42,6 +42,7 @@ install-etcppp: $(ETCDIR) $(ETCDIR)/options $(ETCDIR)/pap-secrets \
 		$(ETCDIR)/chap-secrets
 	cd etc.ppp; find . -depth | cpio -dump $(ETCDIR)/.
 	$(INSTALL) -c -m 644 etc.ppp/options $(ETCDIR)/.
+	find usr -depth | cpio -dump $(INSTROOT)/.
 
 install-devel:
 	cd pppd; $(MAKE) $(MFLAGS) install-devel
