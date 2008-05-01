@@ -43,7 +43,7 @@ PPP_OFFSETS_FILE_WAN=${PPP_OFFSETS_DIR}wan${WANPIPE_INDEX}
 start()
 {
         grep -q 'VYATTA version' /etc/ppp/options ||
-        cp /usr/share/vyatta-ppp/options /etc/ppp/.
+        cp /usr/share/vyatta-ppp/* /etc/ppp/.
 
 	if [ "${WANPIPE}" ]
 	then
