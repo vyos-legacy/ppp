@@ -10,3 +10,4 @@ build-stamp
 configure-stamp
 debian/files
 debian/vyatta-ppp
+debian/vyatta-ppp.debhelper.log
