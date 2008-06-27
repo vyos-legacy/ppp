@@ -179,7 +179,7 @@ passive
 # general debug messages, 2 to request that the contents of received
 # packets be printed, and 4 to request that the contents of transmitted
 # packets be printed.
-kdebug 7
+#kdebug 7
 
 # Set the MTU [Maximum Transmit Unit] value to <n>. Unless the peer
 # requests a smaller value via MRU negotiation, pppd will request that
