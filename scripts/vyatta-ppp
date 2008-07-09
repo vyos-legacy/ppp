@@ -33,7 +33,7 @@ else
 	WANPIPE_INDEX=
 fi
 
-#LOG_FILE=/tmp/${WANPIPE_INDEX}vywan.log
+#LOG_FILE=/tmp/vyatta-ppp-start.log
 LOG_FILE=/dev/null
 PPPD_LOG_FILE=/var/log/wan${WANPIPE_INDEX}.log
 PPP_INTERFACE_FILE=wan${WANPIPE_INDEX}
@@ -47,31 +47,52 @@ start()
 
 	if [ "${WANPIPE}" ]
 	then
-		echo "Starting pppd">>${LOG_FILE}
-		date>>${LOG_FILE}
+		echo "`date`: Starting pppd">>${LOG_FILE}
 		rm -rf ${PPP_OFFSETS_FILE_WAN} 2>>/dev/null
 		/sbin/pon ${PPP_INTERFACE_FILE}</dev/null >>${PPPD_LOG_FILE}  2>&1 &
 	else
-		echo "Starting ALL pppd ... ">>${LOG_FILE}
+		echo "`date`: Starting ALL pppd ... ">>${LOG_FILE}
 		rm -rf ${PPP_OFFSETS_DIR}* 2>>/dev/null
 		/sbin/pallon >>${LOG_FILE} 2>&1
-		echo "Starting ALL pppd done">>${LOG_FILE}
+		echo "`date`: Starting ALL pppd done">>${LOG_FILE}
 	fi
 }
 
 stop()
 {
-	echo "Stopping pppd ${WANPIPE}...">>${LOG_FILE}
 	if [ "${WANPIPE}" ]
 	then
-		date>>${LOG_FILE}
+		echo "`date`: Stopping pppd for ${WANPIPE}..." >> ${LOG_FILE}
+
+		# poff doesn't do a very good job of killing the 
+	        # instances of "pon" that might be running in background
+	        # trying to re-connect this interface.  So we must do the
+	        # job for him.
+		PON_PIDS=` ps -C pon -f | grep ${PPP_INTERFACE_FILE} | awk '{print $2}'`
+		if [ -n "$PON_PIDS" ]; then
+                    echo "killing pon pids: $PON_PIDS" >> ${LOG_FILE}
+                    for PID in $PON_PIDS ; do
+			kill -HUP $PID >> ${LOG_FILE} 2>&1
+                    done
+		fi
+
 		/sbin/poff ${PPP_INTERFACE_FILE}
 		rm -rf ${PPP_OFFSETS_FILE_WAN} 2>>/dev/null
 	else
+		echo "`date`: Stopping all pppd processes..." >> ${LOG_FILE}
+
+		PON_PIDS=` ps -C pon -f | grep pon | awk '{print $2}'`
+                if [ -n "$PON_PIDS" ]; then
+                    echo "killing pon pids: $PON_PIDS" >> ${LOG_FILE}
+                    for PID in $PON_PIDS ; do
+                        kill -HUP $PID >> ${LOG_FILE} 2>&1
+                    done
+                fi
+
 		/sbin/poff -a 
 		rm -rf ${PPP_OFFSETS_DIR}* 2>>/dev/null
 	fi
-	echo "Stopping pppd done">>${LOG_FILE}
+	echo "`date`: Stopping pppd done">>${LOG_FILE}
 }
 
 case "$ACTION" in

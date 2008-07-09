@@ -669,14 +669,9 @@ link_terminated(unit)
     if (the_channel->cleanup)
 	(*the_channel->cleanup)();
 
-    if (doing_multilink && multilink_master) {
-	if (!bundle_terminating) {
-	    new_phase(PHASE_DEAD);
-	    FUNC_DEBUG("%s:%s: %d New Phase MASTER\n", __FILE__,__FUNCTION__,__LINE__);
-	} else {
-	    mp_bundle_terminated();
-	}
-    } else
+    if (doing_multilink && multilink_master)
+	mp_bundle_terminated();
+    else
 	new_phase(PHASE_DEAD);
 
     FUNC_DEBUG("%s:%s: %d exit\n", __FILE__,__FUNCTION__,__LINE__);
