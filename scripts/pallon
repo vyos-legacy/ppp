@@ -28,7 +28,8 @@ poff -a 2>/dev/null >/dev/null
 # now start them all back up
 for i in `cd /etc/ppp/peers; ls wan* 2>/dev/null`
 do
-	echo -n "STARTED ">>/var/log/$i.log
-	date>>/var/log/$i.log
-	pon $i >>/var/log/$i.log&
+#	echo -n "STARTED ">>/var/log/$i.log
+#	date>>/var/log/$i.log
+#	pon $i >>/var/log/$i.log&
+	pon $i > /dev/null &
 done

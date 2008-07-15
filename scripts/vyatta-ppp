@@ -35,7 +35,8 @@ fi
 
 #LOG_FILE=/tmp/vyatta-ppp-start.log
 LOG_FILE=/dev/null
-PPPD_LOG_FILE=/var/log/wan${WANPIPE_INDEX}.log
+#PPPD_LOG_FILE=/var/log/wan${WANPIPE_INDEX}.log
+PPPD_LOG_FILE=/dev/null
 PPP_INTERFACE_FILE=wan${WANPIPE_INDEX}
 PPP_OFFSETS_DIR=/tmp/.offsets/ppp/
 PPP_OFFSETS_FILE_WAN=${PPP_OFFSETS_DIR}wan${WANPIPE_INDEX}
