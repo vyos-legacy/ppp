@@ -7,7 +7,7 @@ Standards-Version: 3.7.2.2
 
 Package: vyatta-ppp
 Section: admin
-Architecture: i386
+Architecture: any
 Depends: ${shlibs:Depends}, libpam-modules, libpam-runtime (>= 0.76-13.1), netbase, procps, libc6
 Conflicts: ppp-pam, ppp-udeb, pppdcapiplugin (<= 1:3.7.2005-07-09-2), makedev (<< 2.3.1-56)
 Provides: ppp
