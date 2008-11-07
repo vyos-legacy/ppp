@@ -21,6 +21,15 @@ if [ ! -e /usr/sbin/pppd ]; then
   ln -s /sbin/pppd /usr/sbin/pppd
 fi
 
+# copy over /etc/ppp/ip-down.d/0000usepeerdns to /etc/ppp/ip-up.d/
+cp -p /etc/ppp/ip-down.d/0000usepeerdns /etc/ppp/ip-up.d/0000usepeerdnsundo
+cat <<"EOF" >>/etc/ppp/ip-up.d/0000usepeerdnsundo
+# This script undos the effect of /etc/ppp/ip-up.d/0000usepeerdns. We use 
+# /etc/ppp/ip-up.d/vyatta-usepeerdns to update resolv.conf. Also on link 
+# down /etc/ppp/ip-down.d/0000usepeerdns will have no effect. We update 
+# resolv.conf on linkdown with /etc/ppp/ip-down.d/vyatta-usepeerdns 
+EOF
+
 }
 
 case "$1" in

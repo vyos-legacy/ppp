@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# multilink, serial, wirelessmodem interfaces pass cli configured
+# interface name as the 1st word in ipparam while pppoe and pppoa
+# interfaces pass just the configured interface name using ipparam
+device=`echo "$6"|awk '{ print $1 }'`
+
+# only do this script for ml, wan, pppoe, pppoa, wlm interfaces
+# any new interfaces using ppp in CLI will have to be passed
+# using ipparam and have to add themselves here
+case "$device"X in
+ ml* | wan* | pppoa* | pppoe* | wlm* );;
+ * )
+    logger -p debug -t "vyatta-usepeerdns" \
+    Invalid interface $device to update resolv.conf on link down
+    exit 0;;
+esac
+
+# remove nameservers in /etc/ppp/resolv-$device.conf from /etc/resolv.conf
+# and then delete /etc/ppp/resolv-$device.conf file
+nameserver_array=($( grep '^nameserver' /etc/ppp/resolv-$device.conf | awk '{print $2}' ))
+ns_array_len=${#nameserver_array[*]}
+i=0
+while [ $i -lt $ns_array_len ]; do
+ sed -i "/${nameserver_array[$i]}[[:space:]].*$device$/d" /etc/resolv.conf
+ let i++
+done
+rm -f /etc/ppp/resolv-$device.conf
+
+# restart dnsmasq and ntp here just as is done in /opt/vyatta/sbin/vyatta-system-nameservers
+
+# restart dnsmasq if dns-forwarding is configured
+if [ -d /opt/vyatta/config/active/service/dns/forwarding ]; then
+   /opt/vyatta/sbin/vyatta-dns-forwarding.pl --update-dnsforwarding --outside-cli >&/dev/null
+fi
+
+# restart ntp if ntp is configured
+if [ -f /etc/ntp.conf ] && grep -q "^server" /etc/ntp.conf; then
+   /usr/sbin/invoke-rc.d ntp restart >&/dev/null
+fi
+
+exit 0
