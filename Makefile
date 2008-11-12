@@ -4,6 +4,7 @@ DESTDIR = $(INSTROOT)
 BINDIR = $(DESTDIR)/sbin
 INCDIR = $(DESTDIR)/usr/include
 MANDIR = $(DESTDIR)/usr/share/man
+DOCDIR = $(DESTDIR)/usr/share/doc/ppp
 ETCDIR = $(INSTROOT)/etc/ppp
 
 # uid 0 = root
@@ -16,12 +17,13 @@ all:
 	cd pppstats; $(MAKE) $(MFLAGS) all
 	cd pppdump; $(MAKE) $(MFLAGS) all
 
-install: $(BINDIR) $(MANDIR)/man8 install-progs install-devel install-etcppp
+install: $(BINDIR) $(DOCDIR) $(MANDIR)/man8 install-progs install-devel install-etcppp
 	$(INSTALL) -c -m 755 scripts/pon $(BINDIR)/.
 	$(INSTALL) -c -m 755 scripts/poff $(BINDIR)/.
 	$(INSTALL) -c -m 755 scripts/plog $(BINDIR)/.
 	$(INSTALL) -c -m 755 scripts/ppp-off $(BINDIR)/.
 	$(INSTALL) -c -m 755 scripts/pallon $(BINDIR)/.
+	$(INSTALL) -c copyright $(DOCDIR)/.
 	mkdir -p $(DESTDIR)/etc/init.d
 	$(INSTALL) -c -m 755 scripts/vyatta-ppp $(DESTDIR)/etc/init.d
 	( \
@@ -55,10 +57,10 @@ $(ETCDIR)/chap-secrets:
 	#$(INSTALL) -c -m 600 etc.ppp/chap-secrets $@
 
 $(BINDIR):
-	$(INSTALL) -d -m 755 $@
 $(MANDIR)/man8:
-	$(INSTALL) -d -m 755 $@
 $(ETCDIR):
+$(DOCDIR):
+	echo MAKEDIR $@
 	$(INSTALL) -d -m 755 $@
 
 clean:
