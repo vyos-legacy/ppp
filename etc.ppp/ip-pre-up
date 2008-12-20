@@ -47,5 +47,7 @@ if [ -x /etc/ppp/ip-pre-up.local ]; then
   exec /etc/ppp/ip-pre-up.local "$*"
 fi
 
-run-parts /etc/ppp/ip-pre-up.d \
-  --arg="$1" --arg="$2" --arg="$3" --arg="$4" --arg="$5" --arg="$6"
+if [ -d /etc/ppp/ip-pre-up.d ]; then
+   run-parts /etc/ppp/ip-pre-up.d \
+      --arg="$1" --arg="$2" --arg="$3" --arg="$4" --arg="$5" --arg="$6"
+fi
