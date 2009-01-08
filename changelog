@@ -3,6 +3,8 @@ vyatta-ppp (2.4.4rel-8-vyatta-15) unstable; urgency=low
   * Add ip-pre-up script
   * Handle renames during preup
 
+  (Tag release)
+
  -- Stephen Hemminger <shemminger@vyatta.com>  Fri, 19 Dec 2008 10:42:10 -0800
 
 vyatta-ppp (2.4.4rel-8-vyatta-14) unstable; urgency=low
