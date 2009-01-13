@@ -1,3 +1,10 @@
+vyatta-ppp (2.4.4rel-8-vyatta-14+islavista1) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Add ip-pre-up script and handle renames in scripts
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 12 Jan 2009 16:20:27 -0800
+
 vyatta-ppp (2.4.4rel-8-vyatta-14) unstable; urgency=low
 
 	  3.2.0
