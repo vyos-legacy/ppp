@@ -1195,12 +1195,6 @@ netif_set_mtu(int unit, int mtu)
 {
     struct ifreq ifr;
 
-    /* Nenad: If not running in sync mode leave mtu as default */
-    if (!sync_serial) {
-	return;
-    }
-
-
     memset (&ifr, '\0', sizeof (ifr));
     strlcpy(ifr.ifr_name, ifname, sizeof (ifr.ifr_name));
     ifr.ifr_mtu = mtu;
