@@ -1,3 +1,10 @@
+vyatta-ppp (2.4.4rel-8-vyatta-14+islavista3) unstable; urgency=low
+
+  [ Bob Gilligan ]
+  * Bugfix 2773:  Don't ignore the mtu parameter from the config file.
+
+ -- Bob Gilligan <gilligan@vyatta.com> Wed, 06 May 2009 11:39:20 -0700
+	
 vyatta-ppp (2.4.4rel-8-vyatta-14+islavista2) unstable; urgency=low
 
 	  3.3.1
