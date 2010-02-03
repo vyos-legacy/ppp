@@ -1,3 +1,9 @@
+vyatta-ppp (2.4.4rel-8-vyatta-19) unstable; urgency=low
+
+  * Enable hardening
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 03 Feb 2010 15:16:38 -0800
+
 vyatta-ppp (2.4.4rel-8-vyatta-18) unstable; urgency=low
 
   * UNRELEASED
