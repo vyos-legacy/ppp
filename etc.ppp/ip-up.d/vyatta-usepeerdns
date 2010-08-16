@@ -42,7 +42,7 @@ done
 # restart dnsmasq and ntp here, just as done in /opt/vyatta/sbin/vyatta-system-nameservers
 
 # restart dnsmasq if dns-forwarding is configured
-if [ -d /opt/vyatta/config/active/service/dns/forwarding ]; then
+if cli-shell-api existsActive service dns forwarding; then
    /opt/vyatta/sbin/vyatta-dns-forwarding.pl --update-dnsforwarding --outside-cli >&/dev/null
 fi
 
