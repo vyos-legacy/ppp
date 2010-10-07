@@ -21,6 +21,15 @@
 # 
 # **** End License ****
 
+### BEGIN INIT INFO
+# Provides:          vyatta-ppp
+# Required-Start:    $local_fs
+# Required-Stop:
+# Default-Start:     S
+# Default-Stop:	     0 6
+# Short-Description: Start stop PPP services
+### END INIT INFO
+
 [ x"/etc/ppp/peers/wan*" = x ] && exit 0
 
 ACTION=$1
