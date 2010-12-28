@@ -1,3 +1,13 @@
+vyatta-ppp (2.4.4rel-8-vyatta-25) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Add debian copyright file
+  * Fix man page syntax errors
+
+  [ An-Cheng Huang ]
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Tue, 28 Dec 2010 20:44:23 +0000
+
 vyatta-ppp (2.4.4rel-8-vyatta-24) unstable; urgency=low
 
   * Add LSB header
