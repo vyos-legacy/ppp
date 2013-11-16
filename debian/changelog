@@ -1,3 +1,9 @@
+vyatta-ppp (2.4.4rel-8-vyatta-28+hydrogen1) unstable; urgency=low
+
+  * New branch
+
+ -- Daniil Baturin <daniil@baturin.org>  Sat, 16 Nov 2013 23:57:01 +0100
+
 vyatta-ppp (2.4.4rel-8-vyatta-27+pacifica3+daisy1) unstable; urgency=low
 
   * create daisy branch
