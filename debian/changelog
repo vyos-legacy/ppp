@@ -1,3 +1,9 @@
+vyatta-ppp (2.4.4rel-8+vyos1+helium1) unstable; urgency=low
+
+  * New branch
+
+ -- Daniil Baturin <daniil@baturin.org>  Sat, 15 Feb 2014 15:36:31 +0100
+
 vyatta-ppp (2.4.4rel-8-vyatta-28+hydrogen1) unstable; urgency=low
 
   * New branch
