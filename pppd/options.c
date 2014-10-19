@@ -1288,9 +1288,10 @@ getword(f, word, newlinep, filename)
 	    /*
 	     * Store the resulting character for the escape sequence.
 	     */
-	    if (len < MAXWORDLEN-1)
+	    if (len < MAXWORDLEN) {
 		word[len] = value;
-	    ++len;
+		++len;
+	    }
 
 	    if (!got)
 		c = getc(f);
@@ -1323,9 +1324,10 @@ getword(f, word, newlinep, filename)
 	/*
 	 * An ordinary character: store it in the word and get another.
 	 */
-	if (len < MAXWORDLEN-1)
+	if (len < MAXWORDLEN) {
 	    word[len] = c;
-	++len;
+	    ++len;
+	}
 
 	c = getc(f);
     }
