@@ -1,3 +1,18 @@
+vyatta-ppp (2.4.4rel-8+vyos2+lithium2) unstable; urgency=low
+
+  [ Toni Cunyat ]
+  * CVE-2014-3158
+
+  [ Daniil Baturin ]
+
+ -- Daniil Baturin <dmbaturin@squeeze32devel.multi.eu>  Sun, 09 Nov 2014 15:45:39 +0100
+
+vyatta-ppp (2.4.4rel-8+vyos2+lithium1) unstable; urgency=low
+
+  * New branch
+
+ -- Daniil Baturin <daniil@baturin.org>  Sat, 15 Feb 2014 15:36:31 +0100
+
 vyatta-ppp (2.4.4rel-8+vyos1+helium1) unstable; urgency=low
 
   * New branch
