@@ -1,3 +1,12 @@
+vyatta-ppp (2.4.4rel-8+vyos2+lithium3) unstable; urgency=low
+
+  [ Benjamin Beret ]
+  * Add ipv6 support in pppd compile flags
+
+  [ Alex Harpin ]
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sat, 13 Dec 2014 09:05:51 +0000
+ 
 vyatta-ppp (2.4.4rel-8+vyos2+lithium2) unstable; urgency=low
 
   [ Toni Cunyat ]
