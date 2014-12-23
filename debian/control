@@ -1,7 +1,7 @@
 Source: vyatta-ppp
 Section: admin
 Priority: optional
-Maintainer: Vyatta Package Maintainers <maintainers@vyatta.com>
+Maintainer: VyOS Package Maintainers <maintainers@vyos.net>
 Build-Depends: debhelper (>> 4.1.17), libpcap0.8-dev, libpam0g-dev, zlib1g-dev, libc6
 Standards-Version: 3.7.2.2
 
