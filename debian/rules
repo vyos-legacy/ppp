@@ -12,6 +12,8 @@ export DEB_BUILD_HARDENING=1
 export DH_COMPAT=5
 
 PWD	:= $(shell pwd)
+D	:= $(CURDIR)/debian/vyatta-ppp
+
 DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 #export KDIR = $(LINUX)
@@ -67,6 +69,9 @@ binary-indep: build install
 # Build architecture-dependent files here.
 binary-arch: build install
 	rm -f debian/files
+
+	mv $D/usr/include/ $D-dev/usr/
+
 	dh_testdir
 	dh_testroot
 
